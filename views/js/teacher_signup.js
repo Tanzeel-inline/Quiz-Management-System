@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("#login").click(function(){
+    $("#signup").click(function(){
         var email = $("#email").val();
         var password = $("#password").val();
         var contact = $('#contact').val();
@@ -30,15 +30,19 @@ $(document).ready(function(){
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({email,password,contact,address}),
-                success: function(res)
+                success: function(response)
                 {
-                    if ( res.success )
+                    if ( response.success )
                     {
                         console.log('Signed up sucessfully');
+                        window.location = "http://localhost:3000/teacher";
                     }
                 }
             });
         }
+    });
+    $('#login').click(function(){
+        window.location = "http://localhost:3000/teacher";
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

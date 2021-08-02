@@ -36,6 +36,7 @@ exports.teacher_get_signup = (req,res)=>{
 };
 
 exports.teacher_post_signup = (req,res)=>{
+    //Validate if data is correct
     //Check if email already exist 
     //Send failure message if exists
     //else (add the data to the database) and send success message

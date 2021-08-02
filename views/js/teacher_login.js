@@ -13,11 +13,25 @@ $(document).ready(function(){
             alert("Invalid email address!!!");
         }
         else {
-            
+            //Interact with server here
+            $.ajax({
+                url: '/teacher_signup',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({email,password}),
+                success: function(res)
+                {
+                    if ( res.success )
+                    {
+                        console.log('Signed up sucessfully');
+                        window.location = "http://localhost:3000/teacher";
+                    }
+                }
+            });
         }
     });
-    $('signup').click(function() {
-
+    $('#signup').click(function() {
+        window.location = "http://localhost:3000/teacher_signup";
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

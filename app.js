@@ -46,4 +46,8 @@ app.get('/student',appController.student_get);
 app.post('/student',appController.student_post);
 
 app.get('/teacher_signup',appController.teacher_get_signup);
+
+app.post('/teacher_signup',appController.teacher_post_signup);
+
+
 app.listen(3000,console.log(`Listening on port 3000`));
