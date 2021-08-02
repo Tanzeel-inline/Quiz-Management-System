@@ -1,6 +1,7 @@
 $(document).ready(function(){
     $("#signup").click(function(){
         var email = $("#email").val();
+        var username = $("#username").val();
         var password = $("#password").val();
         var contact = $('#contact').val();
         var address = $('#address').val();
@@ -29,13 +30,17 @@ $(document).ready(function(){
                 url: '/teacher_signup',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({email,password,contact,address}),
+                data: JSON.stringify({email,username,password,contact,address}),
                 success: function(response)
                 {
                     if ( response.success )
                     {
                         console.log('Signed up sucessfully');
                         window.location = "http://localhost:3000/teacher";
+                    }
+                    else
+                    {
+                        alert("Error in credentials!");
                     }
                 }
             });

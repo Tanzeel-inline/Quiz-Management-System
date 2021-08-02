@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const StudentModel = require('../models/Student.js');
+const TeacherModel = require('../models/Teacher');
+const Joi = require('joi');
 const path = require('path');
 
 exports.homepage_get = (req,res)=> {
@@ -36,6 +38,24 @@ exports.teacher_get_signup = (req,res)=>{
 };
 
 exports.teacher_post_signup = (req,res)=>{
+    const schema = Joi.object().keys({
+        email: Joi.string().trim().email().required() ,
+        username: Joi.string().trim().max(60).required() ,
+        password: Joi.string().min(5).max(10).required() ,
+        contact: Joi.string().length(11).required() ,
+        address: Joi.string().max(100).required()
+    });
+    schema.validate(req.body, (err,result)=>{
+        if ( err )
+        {
+            res.send({success: false})
+        }
+        else
+        {
+            res.send({success:true});
+        }
+        
+    });
     //Validate if data is correct
     //Check if email already exist 
     //Send failure message if exists
