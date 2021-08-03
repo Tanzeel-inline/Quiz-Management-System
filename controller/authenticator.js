@@ -5,7 +5,9 @@ exports.teacher_dashboard_authenticator = (req, res, next)=> {
     }
     else
     {
-        res.redirect('/teacher');
+        //Since we are using ajax we can redirect to the page directly from the server we will have to use the res send to the send the signals to the ajax and then it can perform accordingly
+        res.send({success : false});
+        //res.redirect('/teacher');
     }
 };
 
@@ -18,6 +20,7 @@ exports.student_dashboard_authenticator = (req, res, next)=> {
     }
     else
     {
-        res.redirect('/student');
+        res.send({success : false});
+        //res.redirect('/student');
     }
 };

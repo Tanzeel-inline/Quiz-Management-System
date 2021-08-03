@@ -26,6 +26,10 @@ $(document).ready(function(){
                         console.log('Signed up sucessfully');
                         window.location = "http://localhost:3000/teacher";
                     }
+                    else
+                    {
+                        alert("Error in credentials!");
+                    }
                 }
             });
         }

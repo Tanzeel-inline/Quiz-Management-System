@@ -10,6 +10,7 @@ const StudentModel = require('./models/Student.js');
 //To hash the password
 const bcrypt = require('bcryptjs');
 const appController = require('./controller/appController');
+const cookieParser = require('cookie-parser');
 //Database address
 const connectionURI = 'mongodb://localhost/qms';
 connecter(connectionURI);
@@ -19,6 +20,7 @@ const app = express();
 app.use(express.static(path.join(__dirname,'views')));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+app.use(cookieParser());
 
 
 //To store session variable

@@ -3,9 +3,14 @@ const StudentModel = require('../models/Student.js');
 const TeacherModel = require('../models/Teacher');
 const Joi = require('joi');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 exports.homepage_get = (req,res)=> {
+    //res.cookie("sky", "blue");
+    //res.cookie("grass", "green");
     res.sendFile(path.join(__dirname,'../views','home.html'));
+    console.log(req.cookies);
 };
 
 exports.homepage_post = (req,res)=> {
@@ -19,6 +24,34 @@ exports.teacher_get = (req,res)=> {
     res.sendFile(path.join(__dirname,'../views','teacher_login.html'));
 };
 
+
+exports.teacher_post = async (req,res)=>{
+    const {email,password} = req.body;
+    //We don't need to validate password and email? since we will be checking them in the data
+    //In case we need to validate the email and password here, verify the data here
+
+    //Teacher can login both using email, we have to check whether the email is correct
+    //Email doesn't exist in database
+    let teacher = TeacherModel.findOne({email});
+    if ( !teacher )
+    {
+        res.send({success : false});
+        return;
+    }
+    //Email exist in the database, assign session to the user and forward the teacher to the assign courses screen if it's first time login
+    //Check the password here
+    const pwMatch = await bcrypt.compare(password, teacher.password);
+    if ( !pwMatch )
+    {
+        res.send({success: false});
+        return;
+    }
+    //Creating session variables
+    session.isAuth = true;
+    session.isTeacher = true;
+    session.email = email;
+    res.send({success : true});
+};
 
 exports.student_get = (req,res)=> {
     res.sendFile(path.join(__dirname,'../views','student_login.html'));
@@ -56,7 +89,7 @@ exports.teacher_post_signup = async (req,res)=>{
     //Check if email already exist 
     const{email,username,password,contact,address} = req.body;
     
-    const teacher = await TeacherModel.findOne({email});
+    let teacher = await TeacherModel.findOne({email});
     //Send failure message if exists
     if ( teacher )
     {

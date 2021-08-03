@@ -40,6 +40,7 @@ $(document).ready(function(){
                     }
                     else
                     {
+                        //Check here what error server gave, send back another variable in object form
                         alert("Error in credentials!");
                     }
                 }
