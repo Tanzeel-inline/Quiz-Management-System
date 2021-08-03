@@ -10,7 +10,7 @@ exports.homepage_get = (req,res)=> {
     //res.cookie("sky", "blue");
     //res.cookie("grass", "green");
     res.sendFile(path.join(__dirname,'../views','home.html'));
-    console.log(req.cookies);
+    //console.log(req.cookies);
 };
 
 exports.homepage_post = (req,res)=> {
@@ -19,22 +19,25 @@ exports.homepage_post = (req,res)=> {
     console.log(user);
 };
 
-
+//Teacher Login session Code
 exports.teacher_get = (req,res)=> {
+    console.log("Get request");
     res.sendFile(path.join(__dirname,'../views','teacher_login.html'));
 };
 
-
 exports.teacher_post = async (req,res)=>{
-    const {email,password} = req.body;
+    console.log("Got post request");
+    let {email,password} = req.body;
+    email = email.trim();
     //We don't need to validate password and email? since we will be checking them in the data
     //In case we need to validate the email and password here, verify the data here
 
     //Teacher can login both using email, we have to check whether the email is correct
     //Email doesn't exist in database
-    let teacher = TeacherModel.findOne({email});
+    let teacher = await TeacherModel.findOne({email});
     if ( !teacher )
     {
+        console.log("Email not found!");
         res.send({success : false});
         return;
     }
@@ -43,14 +46,44 @@ exports.teacher_post = async (req,res)=>{
     const pwMatch = await bcrypt.compare(password, teacher.password);
     if ( !pwMatch )
     {
+        console.log("Password didn't match");
         res.send({success: false});
         return;
     }
     //Creating session variables
-    session.isAuth = true;
-    session.isTeacher = true;
-    session.email = email;
+    req.session.isAuth = true;
+    req.session.isTeacher = true;
+    req.session.email = email;
     res.send({success : true});
+};
+//Teacher DashBoard session
+//First time teacher will have to select courses that he want to teach(need bool var)
+//If it's not his first time, then he will be forwarded to teacher_course page
+exports.teacher_dashboard = async (req,res)=>{
+    let teacher_email = req.session.email;
+
+    let teacher = TeacherModel.findOne({teacher_email});
+    //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
+    if ( !teacher )
+    {
+        res.send({success : false, error: 'http://localhost:3000/teacher'});
+    }
+    //Teacher have selected the courses already that he wants to teach
+    if ( teacher.selected_course == true )
+    {
+        res.send({success : false, error: 'http://localhost:3000/quiz_maker'});
+    }
+
+    //Work to do
+    //Read the list of all the courses without teacher currently
+    //Render the teacher dashboard ejs page using the availible courses 
+    //Read back the list, pass it to another function that will check whether the selected courses exist and they are fre, don't have any teacher
+    //Assign teacher to those courses
+};
+
+exports.test_pages = (req,res)=> {
+    let data1 = ['123','456','789'];
+    res.render('../views/teacher_dashboard.ejs',{data: data1});
 };
 
 exports.student_get = (req,res)=> {
@@ -104,7 +137,7 @@ exports.teacher_post_signup = async (req,res)=>{
         username,
         password: pwHash,
         contact,
-        address
+        address,
     });
 
     await teacher.save();

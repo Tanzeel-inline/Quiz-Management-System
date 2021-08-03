@@ -15,7 +15,7 @@ $(document).ready(function(){
         else {
             //Interact with server here
             $.ajax({
-                url: '/teacher_signup',
+                url: '/teacher',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({email,password}),
@@ -39,7 +39,6 @@ $(document).ready(function(){
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        console.log("I was called");
         return regex.test(email);
     }
 });
