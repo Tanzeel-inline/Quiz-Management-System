@@ -1,20 +1,39 @@
-/*$(document).ready(function(){
-    
-    
-});*/
+$(document).ready(function(){
+    var courses = [];
+    $("#myButton").click(function(){
+        $.ajax({
+            url: '/course_pick',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(courses),
+            success: function(response)
+            {
+                if ( response.success )
+                {
+                    console.log("Successfully assigned the coureses to the teacher");
+                    window.location = "http://localhost:3000/quiz_maker";
+                }
+                else
+                {
+                    alert("Error ocurred! Please try again later!");
+                }
+            }
+        });
+    });
+    $(document).on("change", "input[type='checkbox']", function () {
+        if ( this.checked )
+        {
+            console.log("Value checked");
+            courses.push($(this).val());
+        }
+        else
+        {
+            var index = courses.indexOf($(this).val());
+            if (index !== -1) {
+                courses.splice(index, 1);
+            }
+        }
+    });
+});
 
-function inputChanged(event) {
-    event.target.parentElement.parentElement.className =
-    event.target.checked ? 'selected' : '';
-}
-  
-function printSelected() {
-    var textArea = document.getElementsByTagName('textarea')[0];
-    textArea.value = '';
 
-    var selectedRows = document.getElementsByClassName('selected');
-    for (var i = 0; i < selectedRows.length; ++i) {
-        console.log(selectedRows[i].textContent.trim());
-        textArea.value += selectedRows[i].textContent.trim() + '\n';
-    }
-}

@@ -1,16 +1,16 @@
 const bcrypt = require('bcryptjs');
 const StudentModel = require('../models/Student.js');
 const TeacherModel = require('../models/Teacher');
+const CourseModel = require('../models/Course');
+const fs = require('fs');
 const Joi = require('joi');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const Course = require('../models/Course');
 
 exports.homepage_get = (req,res)=> {
-    //res.cookie("sky", "blue");
-    //res.cookie("grass", "green");
     res.sendFile(path.join(__dirname,'../views','home.html'));
-    //console.log(req.cookies);
 };
 
 exports.homepage_post = (req,res)=> {
@@ -21,12 +21,10 @@ exports.homepage_post = (req,res)=> {
 
 //Teacher Login session Code
 exports.teacher_get = (req,res)=> {
-    console.log("Get request");
     res.sendFile(path.join(__dirname,'../views','teacher_login.html'));
 };
 
 exports.teacher_post = async (req,res)=>{
-    console.log("Got post request");
     let {email,password} = req.body;
     email = email.trim();
     //We don't need to validate password and email? since we will be checking them in the data
@@ -59,7 +57,7 @@ exports.teacher_post = async (req,res)=>{
 //Teacher DashBoard session
 //First time teacher will have to select courses that he want to teach(need bool var)
 //If it's not his first time, then he will be forwarded to teacher_course page
-exports.teacher_dashboard = async (req,res)=>{
+exports.quiz_maker_get = async (req,res)=>{
     let teacher_email = req.session.email;
 
     let teacher = TeacherModel.findOne({teacher_email});
@@ -68,19 +66,74 @@ exports.teacher_dashboard = async (req,res)=>{
     {
         res.send({success : false, error: 'http://localhost:3000/teacher'});
     }
-    //Teacher have selected the courses already that he wants to teach
-    if ( teacher.selected_course == true )
+    else ( teacher.selected_course == true )
     {
         res.send({success : false, error: 'http://localhost:3000/quiz_maker'});
     }
-
     //Work to do
+    //Create courses data 
     //Read the list of all the courses without teacher currently
     //Render the teacher dashboard ejs page using the availible courses 
     //Read back the list, pass it to another function that will check whether the selected courses exist and they are fre, don't have any teacher
     //Assign teacher to those courses
 };
 
+exports.course_pick_get = async (req,res)=> {
+    //Inserting the data in the courses section, uncomment to re insert the data
+    /*var obj = require('../courses.json');
+    obj.forEach( async function(data){
+        let course = new CourseModel({
+            courseCode: data.courseCode,
+            courseName: data.courseName,
+            teacher: "-1"
+        });
+
+        await course.save();
+    });*/
+    var courses_name = [];
+    let courses = await CourseModel.find({teacher: "-1"});
+    for ( var i = 0 ; i < courses.length ; i++ )
+    {
+        //console.log(courses[i]._id);
+        courses_name.push(courses[i].courseName);
+    }
+
+    courses = await CourseModel.find({teacher: req.session.email});
+    for ( var i = 0 ; i < courses.length ; i++ )
+    {
+        //console.log(courses[i]._id);
+        courses_name.push(courses[i].courseName);
+    }
+    res.render('../views/teacher_dashboard.ejs',{data: courses_name});
+};
+
+exports.coures_pick_post = async (req,res)=>{
+    let courses = req.body;
+    let teacher = req.session.email;
+    let update_course_instructor  = await CourseModel.updateMany({teacher : req.session.email}, {teacher:"-1"});
+    if ( !update_course_instructor )
+    {
+        console.log("Couldn't update instructor of previous courses");
+    }
+    let availible_courses = await CourseModel.find({courseName: courses});
+    for ( var i = 0 ; i < availible_courses.length ; i++ )
+    {
+        if ( availible_courses[i].teacher == '-1' || availible_courses[i].teacher == req.session.email )
+        {
+            let courseName = availible_courses[i].courseName;
+            const update_teacher = await CourseModel.updateOne({courseName: courseName}, {teacher: teacher});
+            if ( !update_teacher )
+            {
+                console.log(`Couldn't assign course instructor to course ${courseName}`);
+            }
+        }
+        else
+        {
+            console.log(`${req.session.email} tried to pick wrong course ${availible_courses[i].courseName}`);
+        }
+    }
+    res.send({success : true});
+};
 exports.test_pages = (req,res)=> {
     let data1 = ['123','456','789'];
     res.render('../views/teacher_dashboard.ejs',{data: data1});

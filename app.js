@@ -59,7 +59,7 @@ app.get('/teacher', appController.teacher_get);
 
 app.post('/teacher', appController.teacher_post);
 
-app.get('/teacher_dashboard',authenticator.teacher_dashboard_authenticator,
+app.get('/quiz_maker_get',authenticator.teacher_dashboard_authenticator,
  appController.teacher_dashboard);
 
 app.get('/student',appController.student_get);
@@ -68,5 +68,8 @@ app.post('/student',appController.student_post);
 
 app.get('/test_page',appController.test_pages);
 
+app.get('/course_pick',authenticator.teacher_dashboard_authenticator,
+ appController.course_pick_get);
 
+app.post('/course_pick',appController.coures_pick_post);
 app.listen(3000,console.log(`Listening on port 3000`));

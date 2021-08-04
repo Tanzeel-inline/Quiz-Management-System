@@ -88,7 +88,7 @@
     color: #b8c4d2;
   }
   
-  .button {
+  #myButton {
     line-height: 1;
     display: inline-block;
     font-size: 1.2rem;

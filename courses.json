@@ -1,0 +1,40 @@
+[{
+    "courseCode" : "MG205" ,
+    "courseName" : "Management"
+},
+{
+    "courseCode" : "MG206" ,
+    "courseName" : "Marketing"
+},
+{
+    "courseCode" : "CS250" ,
+    "courseName" : "Programming Fundamental"
+},
+{
+    "courseCode" : "CS300" ,
+    "courseName" : "Object Oriented Programming"
+},
+{
+    "courseCode" : "CS301" ,
+    "courseName" : "Data Structure"
+},
+{
+    "courseCode" : "CS400" ,
+    "courseName" : "Analysis of Algorithm"
+},
+{
+    "courseCode" : "CS450" ,
+    "courseName" : "Discrete Structure"
+},
+{
+    "courseCode" : "CS101" ,
+    "courseName" : "Calculus"
+},
+{
+    "courseCode" : "CS201" ,
+    "courseName" : "Linear Algebra"
+},
+{
+    "courseCode" : "CS500" ,
+    "courseName" : "Probability"
+}]

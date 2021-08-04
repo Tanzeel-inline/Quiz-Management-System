@@ -6,21 +6,20 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/teacher_dashboard.js"></script>
 </head>
-
+<body>
 <table>
-
     <% data.forEach(function(dat) { %>
         <tr>
             <td>
-                <input type="checkbox" value="<%= dat%>" onchange="inputChanged(event)" />
+                <input type="checkbox" name="checkbox1" id ="checkbox1" value="<%= dat%>"/>
             </td>
             <td><%= dat%></td>
         </tr>
     <% }); %>
+        <tr>
+            <td colspan="2"><button id ="myButton">Print selected rows</button></td>
+        </tr>
   </table>
-  
-  <button onclick="printSelected()">Print selected rows</button>
-  <textarea></textarea>
 
-
+</body>
 </html>
