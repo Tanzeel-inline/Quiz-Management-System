@@ -32,14 +32,7 @@ const teacherSchema = new schema({
     address: {
         type: String,
         maxLength: 100,
-    },
-    selected_course: {
-        type: Boolean,
-        default: false,
-    },
-    courses: [{
-        type: schema.Types.ObjectId
-    }]
+    }
 });
 
 module.exports = mongoose.model("Teacher",teacherSchema);

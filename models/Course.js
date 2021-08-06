@@ -17,7 +17,7 @@ const courseSchema = new schema({
         required: true
     },
     teacher: {
-        type: schema.Types.String
+        type: String
     }
 });
 

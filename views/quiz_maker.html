@@ -1,46 +1,52 @@
+
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Quiz_creation</title>
-        <meta name="robots" content="noindex, nofollow"><!-- Bootstrap css library -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <!-- jQuery library -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script type="text/javascript" src="js/quiz_maker.js"></script>
-    </head>
-    <body>
-        <form id="form">
-            
-            <div class="form-group fieldGroup">
-                <div class="input-group">
-                    <input type="text" name="question" id ="question" class="form-control" placeholder="Question"/>
-                    <input type="text" name="option1" class="form-control" placeholder="Option 1"/>
-                    <input type="text" name="option2" class="form-control" placeholder="Option 2"/>
-                    <input type="text" name="option3" class="form-control" placeholder="Option 3"/>
-                    <input type="text" name="option4" class="form-control" placeholder="Option 4"/>
-                    <input type="text" name="answer" class="form-control" placeholder="Answer"/>
-                    <div class="input-group-addon"> 
-                        <a href="javascript:void(0)" class="btn btn-success addMore"><span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span> Add</a>
-                    </div>
-                </div>
-            </div>
-            
-            <input type="submit" name="submit" id="submit" class="btn btn-primary" value="SUBMIT"/>
-            
-        </form>
-        
-        <div class="form-group fieldGroupCopy" style="display: none;">
-            <div class="input-group">
-                <input type="text" name="question" id ="question" class="form-control" placeholder="Question"/>
-                <input type="text" name="option1" class="form-control" placeholder="Option 1"/>
-                <input type="text" name="option2" class="form-control" placeholder="Option 2"/>
-                <input type="text" name="option3" class="form-control" placeholder="Option 3"/>
-                <input type="text" name="option4" class="form-control" placeholder="Option 4"/>
-                <input type="text" name="answer" class="form-control" placeholder="Answer"/>
-                <div class="input-group-addon"> 
-                    <a href="javascript:void(0)" class="btn btn-danger remove"><span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true"></span> Remove</a>
-                </div>
-            </div>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/quiz_maker.css">
+  <script type="text/javascript" src="js/quiz_maker.js"></script>
+  <title>Quiz maker</title>
+</head>
+
+<body>
+    <section>
+        <!--for demo wrap-->
+        <h1>Quiz Form</h1>
+        <div class="tbl-content">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tbody id = 'item_field'>
+              <tr>
+                <td>Question</td>
+                <td colspan="4"><input type="text" name="name[0]" id="question" class="task" /></td>
+              </tr>
+              <tr>
+                <td>Option 1</td>
+                <td colspan="4"><input type="text" name="name[1]" id="option1" class="task" /></td>
+              </tr>
+              <tr>
+                <td>Option 2</td>
+                <td colspan="4"><input type="text" name="name[2]" id="option2" class="task" /></td>
+              </tr>
+              <tr>
+                <td>Option 3</td>
+                <td colspan="4"><input type="text" name="name[3]" id="option3" class="task" /></td>
+              </tr>
+              <tr>
+                <td>Option 4</td>
+                <td colspan="4"><input type="text" name="name[4]" id="option4" class="task" /></td>
+              </tr>
+              <tr>
+                <td>Answer</td>
+                <td colspan="4"><input type="text" name="name[5]" id="answer" class="task" /></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-    </body>
+      </section>
+      <button type="button" name="submit" id="submit" value="Submit">Submit</button>
+      <button type="button" name="next" id="next" value="Add next">Add Next</button>
+</body>
 </html>

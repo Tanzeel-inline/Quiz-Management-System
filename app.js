@@ -51,6 +51,10 @@ app.get('/' ,appController.homepage_get);
 
 app.post('/',appController.homepage_post);
 
+app.get('/student',appController.student_get);
+
+app.post('/student',appController.student_post);
+
 app.get('/teacher_signup',appController.teacher_get_signup);
 
 app.post('/teacher_signup',appController.teacher_post_signup);
@@ -59,17 +63,24 @@ app.get('/teacher', appController.teacher_get);
 
 app.post('/teacher', appController.teacher_post);
 
-app.get('/quiz_maker_get',authenticator.teacher_dashboard_authenticator,
- appController.teacher_dashboard);
-
-app.get('/student',appController.student_get);
-
-app.post('/student',appController.student_post);
-
-app.get('/test_page',appController.test_pages);
-
 app.get('/course_pick',authenticator.teacher_dashboard_authenticator,
  appController.course_pick_get);
 
-app.post('/course_pick',appController.coures_pick_post);
+app.post('/course_pick',authenticator.teacher_dashboard_authenticator,
+appController.coures_pick_post);
+
+app.get('/select_course',authenticator.teacher_dashboard_authenticator,
+appController.select_course_get);
+
+app.post('/select_course',authenticator.teacher_dashboard_authenticator,
+appController.select_course_post);
+
+app.get('/quiz_maker',authenticator.teacher_dashboard_authenticator,
+appController.quiz_maker_get);
+
+app.post('/quiz_maker',authenticator.teacher_dashboard_authenticator,
+appController.quiz_maker_post);
+
+
 app.listen(3000,console.log(`Listening on port 3000`));
+app.get('/');

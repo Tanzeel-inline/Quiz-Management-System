@@ -4,8 +4,6 @@ $(document).ready(function(){
         var password = $("#password").val();
         // Checking for blank fields.
         if( email =='' || password ==''){
-            $('input[type="text"],input[type="password"]').css("border","2px solid red");
-            $('input[type="text"],input[type="password"]').css("box-shadow","0 0 3px red");
             alert("Please fill all fields...!!!!!!");
         }
         else if ( !isEmail(email) )
@@ -24,7 +22,7 @@ $(document).ready(function(){
                     if ( res.success )
                     {
                         console.log('Signed up sucessfully');
-                        window.location = "http://localhost:3000/teacher";
+                        window.location = "http://localhost:3000/select_course";
                     }
                     else
                     {

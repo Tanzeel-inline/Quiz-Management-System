@@ -1,26 +1,52 @@
+<!--
+Author: Colorlib
+Author URL: https://colorlib.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Login</title>
-        <meta name="robots" content="noindex, nofollow">
-        <link rel="stylesheet" href="css/style_login.css"/>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script type="text/javascript" src="js/teacher_login.js"></script>
-    </head>
-    <body style="background-color: rgb(10, 54, 54);">
-        <div class="container">
-            <div class="main">
-                <form class="form" method="POST" action="/teacher">
-                    <h2>Teacher Login Portal</h2>
-                        <label>Email :</label>
-                        <input type="text" name="demail" id="email">
-                        <label>Password :</label>
-                        <input type="password" name="password" id="password">
-                        <input type="button" name="login" id="login" value="Login">
-                        <input type="hidden" name="_csrf" value="">
-                        <input type="button" name="signup" id ="signup" value = "SIGN UP">
-                </form>
-            </div>
-        </div>
-    </body>
+<head>
+<title>Teacher Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/teacher_login.js"></script>
+<!-- Custom Theme files -->
+<link href="css/style_teacher_login.css" rel="stylesheet" type="text/css" media="all" />
+<!-- //Custom Theme files -->
+<!-- web font -->
+<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
+<!-- //web font -->
+</head>
+<body>
+	<!-- main -->
+	<div class="main-w3layouts wrapper">
+		<h1>Teacher Login Form</h1>
+		<div class="main-agileinfo">
+			<div class="agileits-top">
+				<form>
+					<input class="text email" type="email" name="email" id = "email" placeholder="Email" required="">
+					<input class="text" type="password" name="password" id = "password" placeholder="Password" required="">
+					<input type="submit" id="login" name ="login" value="LOGIN">
+				</form>
+				<p>Don't have an Account? <a href="http://localhost:3000/teacher_signup">SignUp!</a></p>
+			</div>
+		</div>
+		<!-- //copyright -->
+		<ul class="colorlib-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<!-- //main -->
+</body>
 </html>

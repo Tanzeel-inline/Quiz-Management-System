@@ -1,31 +1,55 @@
+<!--
+Author: Colorlib
+Author URL: https://colorlib.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Teacher Signup</title>
-        <meta name="robots" content="noindex, nofollow">
-        <link rel="stylesheet" href="css/style_teacher_signup.css"/>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script type="text/javascript" src="js/teacher_signup.js"></script>
-    </head>
-    <body style="background-color: rgb(35, 134, 134);">
-        <div class="container">
-            <div class="main">
-                <form class="form" method="POST" action="/teacher">
-                    <h2>Teacher Signup Portal</h2>
-                        <label>Email :</label>
-                        <input type="text" name="email" id="email" placeholder="Email">
-                        <label>UserName :</label>
-                        <input type="text" name="username" id="username" placeholder="Username">
-                        <label>Password :</label>
-                        <input type="password" name="password" id="password" placeholder="Password">
-                        <label>Contact :</label>
-                        <input type="text" name="contact" id="contact" placeholder="Contact">
-                        <label>Address :</label>
-                        <input type="text" name="address" id="address" placeholder="Address">
-                        <input type="button" name="signup" id="signup" value="SIGN UP">
-                        <input type="button" name="login" id="login" value="Login">
-                </form>
-            </div>
-        </div>
-    </body>
+<head>
+<title>Teacher SignUp</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/teacher_signup.js"></script>
+<!-- Custom Theme files -->
+<link href="css/style_teacher_signup.css" rel="stylesheet" type="text/css" media="all" />
+<!-- //Custom Theme files -->
+<!-- web font -->
+<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
+<!-- //web font -->
+</head>
+<body>
+	<!-- main -->
+	<div class="main-w3layouts wrapper">
+		<h1>Teacher SignUp Form</h1>
+		<div class="main-agileinfo">
+			<div class="agileits-top">
+				<form>
+					<input class="text" type="text" name="username" id = "username" placeholder="Username" required="">
+					<input class="text email" type="email" name="email" id = "email" placeholder="Email" required="">
+					<input class="text" type="password" name="password" id = "password" placeholder="Password" required="">
+                    <input class="text email" type="text" name="contact" id ="contact" placeholder="Contact" required="">
+                    <input class="text" type="text" name="address" id ="address" placeholder="Address" required="">
+					<input type="submit" id="signup" name ="signup" value="SIGNUP">
+				</form>
+				<p>Have an Account? <a href="http://localhost:3000/teacher"> Login Now!</a></p>
+			</div>
+		</div>
+		<!-- //copyright -->
+		<ul class="colorlib-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<!-- //main -->
+</body>
 </html>

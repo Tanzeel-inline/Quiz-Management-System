@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/select_course.css">
+  <script type="text/javascript" src="js/select_course.js"></script>
+  <title>Choose course</title>
+</head>
+
+<body>
+    <div class="continput">
+      <h1>Make Quiz</h1>
+      <ul>
+        <% data.forEach(function(dat) { %>
+        <li>
+          <input type="radio" name="radio" id = "radio-1" value="<%= dat%>">
+          <label><%= dat%></label>
+          <div class="bullet">
+            <div class="line zero"></div>
+            <div class="line one"></div>
+            <div class="line two"></div>
+            <div class="line three"></div>
+            <div class="line four"></div>
+            <div class="line five"></div>
+            <div class="line six"></div>
+            <div class="line seven"></div>
+          </div>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="cntr">
+      <button id ="btn" name = "btn" ><a href="http://localhost:3000/course_pick">Change</a></button>
+    </div>
+</body>
+</html>

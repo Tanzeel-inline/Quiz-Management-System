@@ -11,7 +11,7 @@ $(document).ready(function(){
                 if ( response.success )
                 {
                     console.log("Successfully assigned the coureses to the teacher");
-                    window.location = "http://localhost:3000/quiz_maker";
+                    window.location = "http://localhost:3000/select_course";
                 }
                 else
                 {

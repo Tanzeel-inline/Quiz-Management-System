@@ -1,0 +1,122 @@
+Quiz_maker.css:
+h1 {
+    grid-area: itemNumber;
+    color: white;
+    font-family: monospace;
+    margin-left: 10px;
+    display: inline;
+    align-self: center;
+  }
+  
+  input {
+    background-color: #DEFDE0;
+    border-radius: 5px;
+    border: 1px solid;
+    outline: none;
+    overflow: auto;
+    grid-area: textarea;
+    margin-top: 20px;
+    width: 50%;
+    height: 30px;
+    margin-left: 5px;
+  }
+  
+  button {
+    grid-area: plus;
+    padding: 7px;
+    width: 35px;
+    border: 1px solid;
+    outline: none;
+    border-radius: 5px;
+    margin-top: 22px;
+    margin-left: 5px;
+  }
+  
+  #submit {
+    background-color: #F0DEFD;
+    border-radius: 5px;
+    border: 1px solid;
+    position: static;
+    grid-area: send;
+    padding: 7px;
+    width: 60px;
+  }
+  
+  body {
+    background-color: black;
+  }
+
+
+Quiz_maker.html:
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/quiz_maker.css">
+  <script type="text/javascript" src="js/quiz_maker.js"></script>
+  <title>My Form</title>
+</head>
+
+<body>
+  <!-- Create your form here -->
+  <div class="container">
+    <br/>
+    <br/>
+    <div class="form-group">
+      <form name="add_name" id="add_name" method="post">
+        <div class="table table-bordered" id="item_field">
+          <h1><br/>Question 1</h1>
+          <input type="text" name="name[0]" id="item1" class="task" />
+          <h1><br/>Option 1</h1>
+          <input type="text" name="name[0]" id="option11" class="task" />
+          <h1><br/>Option 2</h1>
+          <input type="text" name="name[0]" id="option21" class="task" />
+          <h1><br/>Option 3</h1>
+          <input type="text" name="name[0]" id="option31" class="task" />
+          <h1><br/>Option 4</h1>
+          <input type="text" name="name[0]" id="option41" class="task" />
+          <h1><br/>Answer</h1>
+          <input type="text" name="name[0]" id="answer" class="task" />
+          <button type="button" name="add" id="add" class="addButton">+</button>
+        </div>
+        <button type="button" name="submit" id="submit" value="Submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
+
+
+Quiz_maker.js:
+
+$(document).ready(function() {
+    var count = 1;
+    var $itemIds = Array.from($('h1 + .task'))
+    var ids = $itemIds.map(task => $(task).attr('id'))
+    $('#add').on('click', function() {
+        count++;
+        $('#item_field').append('<br><h1>Question ' + count + '</h1><input type="text" name="name[' + (count - 1) + ']" id="item' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+        $('#item_field').append('<br><h1>Option 1</h1><input type="text" name="name[' + (count - 1) + ']" id="option1' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+        $('#item_field').append('<br><h1>Option 2</h1><input type="text" name="name[' + (count - 1) + ']" id="option2' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+        $('#item_field').append('<br><h1>Option 3</h1><input type="text" name="name[' + (count - 1) + ']" id="option3' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+        $('#item_field').append('<br><h1>Option 4</h1><input type="text" name="name[' + (count - 1) + ']" id="option4' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+        $('#item_field').append('<br><h1>Answer</h1><input type="text" name="name[' + (count - 1) + ']" id="answer' + count + '" class="task" cols="22" rows="2">');
+        $('#add').insertAfter('#item' + count);
+    });
+    $('#submit').on('click', function() {
+        var items = [];
+        for (let i = 1; i <= count; i++) { // iterate through all of the items
+            items.push($('#item' + i).val());
+        }
+        console.log(items);
+    });
+});

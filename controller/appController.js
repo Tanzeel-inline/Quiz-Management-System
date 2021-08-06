@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const StudentModel = require('../models/Student.js');
 const TeacherModel = require('../models/Teacher');
 const CourseModel = require('../models/Course');
+const QuizModel = require('../models/Quiz');
 const fs = require('fs');
 const Joi = require('joi');
 const path = require('path');
@@ -59,23 +60,107 @@ exports.teacher_post = async (req,res)=>{
 //If it's not his first time, then he will be forwarded to teacher_course page
 exports.quiz_maker_get = async (req,res)=>{
     let teacher_email = req.session.email;
-
-    let teacher = TeacherModel.findOne({teacher_email});
+    //console.log(teacher.teacher_email)
+    let course_selected = req.session.course;
+    console.log(`Quiz maker get: Course is : ${course_selected}`);
+    console.log(`Quiz maker get: Teacher is : ${teacher_email}`);
+    let teacher = await TeacherModel.findOne({email: teacher_email});
     //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
     if ( !teacher )
     {
-        res.send({success : false, error: 'http://localhost:3000/teacher'});
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+        console.log(`Quiz maker get: Couldn't validate the teacher`);
+        res.redirect('http://localhost:3000/teacher');
+        return;
     }
-    else ( teacher.selected_course == true )
+    else if ( req.session.course == null )
     {
-        res.send({success : false, error: 'http://localhost:3000/quiz_maker'});
+        res.redirect('http://localhost:3000/select_course');
+        return;
     }
-    //Work to do
-    //Create courses data 
-    //Read the list of all the courses without teacher currently
-    //Render the teacher dashboard ejs page using the availible courses 
-    //Read back the list, pass it to another function that will check whether the selected courses exist and they are fre, don't have any teacher
-    //Assign teacher to those courses
+
+    let course_validator = await CourseModel.findOne({courseCode: course_selected,
+         teacher: teacher_email});
+    
+    if ( !course_validator )
+    {
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+        console.log(`Quiz maker get: Couldn't validate the course`);
+        res.redirect('http://localhost:3000/teacher');
+        return;
+    }
+    else
+    {
+        res.sendFile(path.join(__dirname,'../views','quiz_maker.html'));
+    }
+};
+
+exports.quiz_maker_post = async(req,res)=> {
+    let teacher_email = req.session.email;
+    //console.log(teacher.teacher_email)
+    let course_selected = req.session.course;
+    console.log(`Quiz maker get: Course is : ${course_selected}`);
+    console.log(`Quiz maker get: Teacher is : ${teacher_email}`);
+    let teacher = await TeacherModel.findOne({email: teacher_email});
+    //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
+    if ( !teacher )
+    {
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+        console.log(`Quiz maker get: Couldn't validate the teacher`);
+        res.redirect('http://localhost:3000/teacher');
+        return;
+    }
+    else if ( req.session.course == null )
+    {
+        res.redirect('http://localhost:3000/select_course');
+        return;
+    }
+
+    let course_validator = await CourseModel.findOne({courseCode: course_selected,
+         teacher: teacher_email});
+    
+    if ( !course_validator )
+    {
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+        console.log(`Quiz maker get: Couldn't validate the course`);
+        res.redirect('http://localhost:3000/teacher');
+        return;
+    }
+    //Now we have input here, lets try to save it in quiz schema
+    else
+    {
+        let question = req.body.questions;
+        let option1 = req.body.options1;
+        let option2 = req.body.options2;
+        let option3 = req.body.options3;
+        let option4 = req.body.options4;
+        let answer = req.body.answers;
+        
+        let quiz_addition = new QuizModel({
+            courseCode: course_selected,
+            question,
+            option1,
+            option2,
+            option3,
+            option4,
+            answer
+        });
+        console.log("Quiz maker post: Quiz saved successfully");
+        await quiz_addition.save();
+        //res.sendFile(path.join(__dirname,'../views','quiz_maker.html'));
+    }
 };
 
 exports.course_pick_get = async (req,res)=> {
@@ -110,7 +195,10 @@ exports.course_pick_get = async (req,res)=> {
 exports.coures_pick_post = async (req,res)=>{
     let courses = req.body;
     let teacher = req.session.email;
-    let update_course_instructor  = await CourseModel.updateMany({teacher : req.session.email}, {teacher:"-1"});
+    //Re-setting the courses of that specific teacher
+    let update_course_instructor  = await CourseModel.updateMany({teacher : "-1"}, {teacher : req.session.email});
+    //Updating the courses teacher
+    update_course_instructor  = await CourseModel.updateMany({teacher : req.session.email}, {teacher:"-1"});
     if ( !update_course_instructor )
     {
         console.log("Couldn't update instructor of previous courses");
@@ -133,10 +221,6 @@ exports.coures_pick_post = async (req,res)=>{
         }
     }
     res.send({success : true});
-};
-exports.test_pages = (req,res)=> {
-    let data1 = ['123','456','789'];
-    res.render('../views/teacher_dashboard.ejs',{data: data1});
 };
 
 exports.student_get = (req,res)=> {
@@ -195,6 +279,61 @@ exports.teacher_post_signup = async (req,res)=>{
 
     await teacher.save();
     
+    console.log('Teacher post signup: Teacher added to the database');
     console.log(req.body);
     res.send({success:true});
+};
+
+
+exports.select_course_get = async (req, res)=>{
+
+    const email = req.session.email;
+    console.log(email);
+    //Check if teacher exist in database, in case if teacher is removed from database and he does have session variable
+    //We will destroy session variable for that teacher and redirect him to login page
+    //--------------------Work here to destroy session vairable---------------------------
+    let teacher = await TeacherModel.findOne({email: req.session.email});
+
+    console.log(teacher.username);
+    if ( !teacher )
+    {
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+
+        res.redirect('/teacher');
+        return;
+    }
+
+    let teacher_courses = await CourseModel.find({teacher: email});
+    var courses_list = [];
+    for ( var i = 0 ; i < teacher_courses.length ; i++ )
+    {
+        courses_list.push(teacher_courses[i].courseCode);
+        //console.log(teacher_courses[i].courseCode);
+    }
+    
+    res.render('../views/select_course.ejs', {data : courses_list});
+};
+
+exports.select_course_post = async (req, res)=>{
+    const email = req.session.email;
+    console.log("I am inside select course post function");
+    console.log(email);
+    console.log(req.body.course);
+    let teacher = await TeacherModel.findOne({email: req.session.email});
+    console.log(teacher.username);
+    if ( !teacher )
+    {
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isTeacher = null;
+        req.session.course = null;
+        res.redirect('/teacher');
+        return;
+    }
+    req.session.course = req.body.course;
+    console.log(req.session.course);
+    res.send({success: true});
 };
