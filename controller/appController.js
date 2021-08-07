@@ -28,6 +28,7 @@ exports.teacher_get = (req,res)=> {
 exports.teacher_post = async (req,res)=>{
     let {email,password} = req.body;
     email = email.trim();
+	password = password.trim();
     //We don't need to validate password and email? since we will be checking them in the data
     //In case we need to validate the email and password here, verify the data here
 
@@ -36,7 +37,7 @@ exports.teacher_post = async (req,res)=>{
     let teacher = await TeacherModel.findOne({email});
     if ( !teacher )
     {
-        console.log("Email not found!");
+        console.log("Teacher Login: Email not found!");
         res.send({success : false});
         return;
     }
@@ -45,7 +46,7 @@ exports.teacher_post = async (req,res)=>{
     const pwMatch = await bcrypt.compare(password, teacher.password);
     if ( !pwMatch )
     {
-        console.log("Password didn't match");
+        console.log(`Teacher Login ${email}: Password didn't match`);
         res.send({success: false});
         return;
     }
@@ -84,7 +85,7 @@ exports.quiz_maker_get = async (req,res)=>{
 
     let course_validator = await CourseModel.findOne({courseCode: course_selected,
          teacher: teacher_email});
-    
+    //Unknown error but will check
     if ( !course_validator )
     {
         req.session.email = null;
@@ -105,8 +106,8 @@ exports.quiz_maker_post = async(req,res)=> {
     let teacher_email = req.session.email;
     //console.log(teacher.teacher_email)
     let course_selected = req.session.course;
-    console.log(`Quiz maker get: Course is : ${course_selected}`);
-    console.log(`Quiz maker get: Teacher is : ${teacher_email}`);
+    console.log(`Quiz maker post: Course is : ${course_selected}`);
+    console.log(`Quiz maker post: Teacher is : ${teacher_email}`);
     let teacher = await TeacherModel.findOne({email: teacher_email});
     //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
     if ( !teacher )
@@ -159,6 +160,8 @@ exports.quiz_maker_post = async(req,res)=> {
         });
         console.log("Quiz maker post: Quiz saved successfully");
         await quiz_addition.save();
+		req.session.course = null;
+		res.send({success: true});
         //res.sendFile(path.join(__dirname,'../views','quiz_maker.html'));
     }
 };
@@ -235,7 +238,6 @@ exports.student_post = (req,res)=> {
     res.send({success: true});
 };
 
-
 exports.teacher_get_signup = (req,res)=>{
     res.sendFile(path.join(__dirname,'../views','teacher_signup.html')); 
 };
@@ -284,7 +286,6 @@ exports.teacher_post_signup = async (req,res)=>{
     res.send({success:true});
 };
 
-
 exports.select_course_get = async (req, res)=>{
 
     const email = req.session.email;
@@ -301,7 +302,6 @@ exports.select_course_get = async (req, res)=>{
         req.session.isAuth = null;
         req.session.isTeacher = null;
         req.session.course = null;
-
         res.redirect('/teacher');
         return;
     }
