@@ -1,0 +1,188 @@
+html:
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Teacher Signup</title>
+        <meta name="robots" content="noindex, nofollow">
+        <link rel="stylesheet" href="css/style_teacher_signup.css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/teacher_signup.js"></script>
+    </head>
+    <body style="background-color: rgb(35, 134, 134);">
+        <div class="container">
+            <div class="main">
+                <form class="form" method="POST" action="/teacher">
+                    <h2>Teacher Signup Portal</h2>
+                        <label>Email :</label>
+                        <input type="text" name="email" id="email" placeholder="Email">
+                        <label>UserName :</label>
+                        <input type="text" name="username" id="username" placeholder="Username">
+                        <label>Password :</label>
+                        <input type="password" name="password" id="password" placeholder="Password">
+                        <label>Contact :</label>
+                        <input type="text" name="contact" id="contact" placeholder="Contact">
+                        <label>Address :</label>
+                        <input type="text" name="address" id="address" placeholder="Address">
+                        <input type="button" name="signup" id="signup" value="SIGN UP">
+                        <input type="button" name="login" id="login" value="Login">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+css:
+/* Below line is used for online Google font */
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+h2{
+    text-align: center;
+    font-size: 24px;
+}
+hr{
+    margin-bottom: 30px;
+}
+div.container{
+    width: 960px;
+    height: 610px;
+    margin:50px auto;
+    margin-left: 35%;
+    font-family: 'Droid Serif', serif;
+    position:relative;
+}
+div.main{
+    width: 320px;
+    margin-top: 80px;
+    float:left;
+    padding: 10px 55px 40px;
+    background-color: rgba(14, 160, 170, 0.65);
+    border: 15px solid white;
+    box-shadow: 0 0 10px;
+    border-radius: 2px;
+    font-size: 13px;
+}
+input[type=text],[type=password] {
+    width: 97.7%;
+    height: 34px;
+    padding-left: 5px;
+    margin-bottom: 20px;
+    margin-top: 8px;
+    box-shadow: 0 0 5px #00F5FF;
+    border: 2px solid #00F5FF;
+    color: #4f4f4f;
+    font-size: 16px;
+    font-family: 'Droid Serif', serif;
+}
+label{
+    color: #464646;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 14px;
+    font-weight: bold;
+}
+#login {
+    width: 80%;
+    background: linear-gradient(#22abe9 5%, #36caf0 100%);
+    border: 1px solid #0F799E;
+    font-size: 20px;
+    margin-top: 15px;
+    margin-left: 10%;
+    padding: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    text-shadow: 0px 1px 0px #13506D;
+}
+#login:hover{
+    background: linear-gradient(#36caf0 5%, #22abe9 100%);
+}
+#signup {
+    width: 100%;
+    background: linear-gradient(#22abe9 5%, #36caf0 100%);
+    border: 1px solid #0F799E;
+    font-size: 20px;
+    margin-top: 15px;
+    padding: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    text-shadow: 0px 1px 0px #13506D;
+}
+#signup:hover{
+    background: linear-gradient(#36caf0 5%, #22abe9 100%);
+}
+
+js:
+$(document).ready(function(){
+    $("#signup").click(function(){
+        var email = $("#email").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var contact = $('#contact').val();
+        var address = $('#address').val();
+        // Checking for blank fields.
+        if( email =='' || password =='' ||
+         username =='' || contact =='' || address =='' ){
+            $('input[type="text"],input[type="password"]').css("border","2px solid red");
+            $('input[type="text"],input[type="password"]').css("box-shadow","0 0 3px red");
+            alert("Please fill all fields...!!!!!!");
+        }
+        else if ( !isEmail(email) )
+        {
+            alert("Invalid email address!!!");
+        }
+        else if ( !contactLength(contact) )
+        {
+            alert("Contact number must have 11 characters only! Example : 03001234567");
+        }
+        else if ( !addressLength(address)) {
+            alert("Length exceeded, maximum allowed length is 100");
+        }
+        else
+        {
+            //Interact with server here
+            $.ajax({
+                url: '/teacher_signup',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({email,username,password,contact,address}),
+                success: function(response)
+                {
+                    if ( response.success )
+                    {
+                        console.log('Signed up sucessfully');
+                        window.location = "http://localhost:3000/teacher";
+                    }
+                    else
+                    {
+                        //Check here what error server gave, send back another variable in object form
+                        alert("Error in credentials!");
+                    }
+                }
+            });
+        }
+    });
+    $('#login').click(function(){
+        window.location = "http://localhost:3000/teacher";
+    });
+    function isEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        console.log("I was called");
+        return regex.test(email);
+    }
+    function contactLength(contact)
+    {
+        if ( contact.length != 11)
+        {
+            return false;
+        }
+        return true;
+    }
+    function addressLength(address)
+    {
+        if ( address.length > 100 )
+        {
+            return false;
+        }
+        return true;
+    }
+});
