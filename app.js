@@ -55,6 +55,10 @@ app.get('/student',appController.student_get);
 
 app.post('/student',appController.student_post);
 
+app.get('/student_signup',appController.student_get_signup);
+
+app.post('/student_signup',appController.student_post_signup);
+
 app.get('/teacher_signup',appController.teacher_get_signup);
 
 app.post('/teacher_signup',appController.teacher_post_signup);

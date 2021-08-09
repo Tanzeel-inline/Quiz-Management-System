@@ -20,10 +20,6 @@ const studentSchema = new schema({
         type: String,
         required: true,
     },
-    date:{
-        type: Date,
-        default: Date.now,
-    },
     contact: {
         type: String,
         length: 11,
@@ -35,9 +31,6 @@ const studentSchema = new schema({
     courses: [{
         type: schema.Types.ObjectId
     }]
-    /*Quiz: {
-
-    }*/
 });
 
 module.exports = mongoose.model("Student",studentSchema);

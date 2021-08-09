@@ -4,8 +4,6 @@ $(document).ready(function(){
         var password = $("#password").val();
         // Checking for blank fields.
         if( email =='' || password ==''){
-            $('input[type="text"],input[type="password"]').css("border","2px solid red");
-            $('input[type="text"],input[type="password"]').css("box-shadow","0 0 3px red");
             alert("Please fill all fields...!!!!!!");
         }
         else if ( !isEmail(email) )
@@ -13,24 +11,29 @@ $(document).ready(function(){
             alert("Invalid email address!!!");
         }
         else {
+            //Interact with server here
             $.ajax({
                 url: '/student',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({email,password}),
-                success : (response)=>{
-                    if ( response.success )
+                success: function(res)
+                {
+                    if ( res.success )
                     {
-                        console.log(response);
-                        console.log("Successfully received the data");
+                        console.log('Signed up sucessfully');
+                        window.location = "http://localhost:3000/student";
                     }
                     else
                     {
-                        alert("Invalid creditnials");
+                        alert("Error in credentials!");
                     }
-                },
+                }
             });
         }
+    });
+    $('#signup').click(function() {
+        window.location = "http://localhost:3000/student_signup";
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

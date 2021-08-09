@@ -9,6 +9,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const Course = require('../models/Course');
+const Student = require('../models/Student.js');
 
 exports.homepage_get = (req,res)=> {
     res.sendFile(path.join(__dirname,'../views','home.html'));
@@ -56,9 +57,44 @@ exports.teacher_post = async (req,res)=>{
     req.session.email = email;
     res.send({success : true});
 };
-//Teacher DashBoard session
-//First time teacher will have to select courses that he want to teach(need bool var)
-//If it's not his first time, then he will be forwarded to teacher_course page
+
+//Student Login Code
+exports.student_get = (req,res)=> {
+    res.sendFile(path.join(__dirname,'../views','student_login.html'));
+};
+
+exports.student_post = async (req,res)=> {
+    //Validate the user input here
+    //Set the session variable if user has given correct credintials
+    console.log(req.body);
+	let {email,password} = req.body;
+	email = email.trim();
+	password = password.trim();
+
+	let student = await StudentModel.findOne({email});
+
+	if ( !student )
+	{
+		console.log("Student Login Post: Student email not found!");
+		res.send({success : false});
+	}
+	//Email exist in the database, assign session to the user and forward the teacher to the assign courses screen if it's first time login
+    //Check the password here
+    const pwMatch = await bcrypt.compare(password, student.password);
+    if ( !pwMatch )
+    {
+        console.log(`Student Login ${email}: Password didn't match`);
+        res.send({success: false});
+        return;
+    }
+	//Creating session variables
+    req.session.isAuth = true;
+    req.session.isStudent = true;
+    req.session.email = email;
+    res.send({success : true});
+};
+
+//Teacher quiz making Code
 exports.quiz_maker_get = async (req,res)=>{
     let teacher_email = req.session.email;
     //console.log(teacher.teacher_email)
@@ -166,6 +202,7 @@ exports.quiz_maker_post = async(req,res)=> {
     }
 };
 
+//Teacher picking the course to make quiz of Code
 exports.course_pick_get = async (req,res)=> {
     //Inserting the data in the courses section, uncomment to re insert the data
     /*var obj = require('../courses.json');
@@ -226,18 +263,55 @@ exports.coures_pick_post = async (req,res)=>{
     res.send({success : true});
 };
 
-exports.student_get = (req,res)=> {
-    res.sendFile(path.join(__dirname,'../views','student_login.html'));
+
+exports.student_get_signup = (req,res)=>{
+	res.sendFile(path.join(__dirname,'../views','student_signup.html'));
 };
 
-exports.student_post = (req,res)=> {
-    //Validate the user input here
-    //Set the session variable if user has given correct credintials
+exports.student_post_signup = async (req,res)=>{
+	//Validate if data is correct
+    const schema = Joi.object().keys({
+        email: Joi.string().trim().email().required() ,
+        username: Joi.string().trim().max(60).required() ,
+        password: Joi.string().min(5).max(10).required() ,
+        contact: Joi.string().length(11).required() ,
+        address: Joi.string().max(100).required()
+    });
+    schema.validate(req.body, (err,result)=>{
+        if ( err )
+        {
+            res.send({success: false});
+            return;
+        }
+    });
+    //Check if email already exist 
+    const{email,username,password,contact,address} = req.body;
+    
+    let student = await StudentModel.findOne({email});
+    //Send failure message if exists
+    if ( student )
+    {
+        res.send({success: false});
+        return;
+    }
+    //else (add the data to the database) and send success message
+    const pwHash = await bcrypt.hash(password, 12);
+
+    student = new StudentModel({
+        email,
+        username,
+        password: pwHash,
+        contact,
+        address,
+    });
+
+    await student.save();
+    
+    console.log('Teacher post signup: Teacher added to the database');
     console.log(req.body);
-    //Set success based on whether correct input were given or not
-    res.send({success: true});
+    res.send({success:true});
 };
-
+//Teacher Sign up Code
 exports.teacher_get_signup = (req,res)=>{
     res.sendFile(path.join(__dirname,'../views','teacher_signup.html')); 
 };
@@ -286,6 +360,7 @@ exports.teacher_post_signup = async (req,res)=>{
     res.send({success:true});
 };
 
+//Teacher selecting course to make quiz of Code
 exports.select_course_get = async (req, res)=>{
 
     const email = req.session.email;
