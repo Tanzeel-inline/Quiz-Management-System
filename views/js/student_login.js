@@ -1,5 +1,6 @@
 $(document).ready(function(){
     $("#login").click(function(){
+        console.log('Login clicked!');
         var email = $("#email").val();
         var password = $("#password").val();
         // Checking for blank fields.
@@ -22,12 +23,16 @@ $(document).ready(function(){
                     if ( res.success )
                     {
                         console.log('Signed up sucessfully');
-                        window.location = "http://localhost:3000/student";
+                        window.location = "http://localhost:3000/select_student_course";
                     }
                     else
                     {
                         alert("Error in credentials!");
                     }
+                },
+                error: function()
+                {   
+                    alert('Problem is here');
                 }
             });
         }

@@ -30,7 +30,11 @@ const quizSchema = new schema({
     totalMark: {
         type: Number,
         require: true
-    }
+    },
+    title: {
+        type: String,
+        required: true
+    }  
     
 });
 

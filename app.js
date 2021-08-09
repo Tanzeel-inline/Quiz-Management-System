@@ -85,6 +85,28 @@ appController.quiz_maker_get);
 app.post('/quiz_maker',authenticator.teacher_dashboard_authenticator,
 appController.quiz_maker_post);
 
+app.get('/select_student_course',authenticator.student_dashboard_authenticator,
+appController.select_student_course_get);
 
+app.post('/select_student_course',authenticator.student_dashboard_authenticator,
+appController.select_student_course_post);
+
+app.get('/pick_student_course',authenticator.student_dashboard_authenticator,
+appController.pick_student_course_get);
+
+app.post('/pick_student_course',authenticator.student_dashboard_authenticator,
+appController.pick_student_course_post);
+
+app.get('/select_student_title',authenticator.student_dashboard_authenticator,
+appController.pick_student_quiz_get);
+
+app.post('/select_student_title',authenticator.student_dashboard_authenticator,
+appController.pick_student_quiz_post);
+
+
+app.get('/quiz_attempt',authenticator.student_dashboard_authenticator,
+appController.quiz_attempt_get);
+
+app.post('/quiz_attempt');
 app.listen(3000,console.log(`Listening on port 3000`));
 app.get('/');

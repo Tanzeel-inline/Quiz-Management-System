@@ -29,7 +29,7 @@ const studentSchema = new schema({
         maxLength: 100,
     },
     courses: [{
-        type: schema.Types.ObjectId
+        type: String
     }]
 });
 

@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var title_set = false;
+    var title_val = '';
     var questions = [];
     var options1 = [];
     var options2 = [];
@@ -7,6 +9,15 @@ $(document).ready(function() {
     var answers = [];
     $('#submit').on('click', function() 
     {
+        if ( !title_set )
+        {
+            setTitle();
+            if ( !title_set )
+            {
+                alert("You haven't given the quiz a title");
+                return;
+            }
+        }
         if ( $('#question').val() != '' && $('#option1').val() != '' && $('#option2').val() != '' &&
         $('#option3').val() != '' && $('#option4').val() != '' && $('#answer').val() != '')
         {
@@ -17,12 +28,17 @@ $(document).ready(function() {
             options4.push($('#option4').val());
             answers.push($('#answer').val());
         }
+        else
+        {
+            alert("One of the value is missing!");
+            return;
+        }
         
         $.ajax({
             url: '/quiz_maker',
             type: 'POST',
             contentType: 'application/json',
-            data : JSON.stringify({questions,options1,options2,options3,options4,answers}),
+            data : JSON.stringify({questions,options1,options2,options3,options4,answers,title_val}),
             success: function(response)
             {
                 if ( response.success )
@@ -31,7 +47,7 @@ $(document).ready(function() {
                 }
                 else
                 {
-                    alert("Couldn't make the quiz");
+                    alert(response.error);
                     window.location = "http://localhost:3000/select_course";
                 }
             }
@@ -40,7 +56,8 @@ $(document).ready(function() {
     });
 
     $('#next').on('click', function() {
-        console.log("I was clicked");
+        
+        setTitle();
         if ( $('#question').val() != '' && $('#option1').val() != '' && $('#option2').val() != '' &&
         $('#option3').val() != '' && $('#option4').val() != '' && $('#answer').val() != '')
         {
@@ -54,4 +71,18 @@ $(document).ready(function() {
 
         $('input[type=text').val('');
     });
+
+    function setTitle()
+    {   
+        //Checking if title was set
+        if ( !title_set )
+        {
+            if ( $('#title').val() != '' )
+            {
+                title_val = $('#title').val();
+                title_set = true;
+                $("#title").prop('disabled', true);
+            } 
+        }
+    }
 });

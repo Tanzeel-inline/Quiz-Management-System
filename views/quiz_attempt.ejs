@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript" src="js/quiz_attempt.js"></script>
+</head>
+
+<body>
+    <% for(var i=0; i < data.length; i++) { %>
+    <div class="container mt-sm-5 my-1">
+        
+        <div class="question ml-sm-5 pl-sm-5 pt-2">
+            <div class="py-2 h5"><b><p>Q. <%= data[i].question %></p></b></div>
+            <div class="ml-md-3 ml-sm-3 pl-md-5 pt-sm-0 pt-3" id="options"> 
+                <label class="options"><%= data[i].option1 %> <input type="radio" name="<%=i%>" id ="<%= data[i].option1 %>" value ="<%= data[i].option1 %>"> <span class="checkmark"></span> </label>
+                <br/>
+                <label class="options"><%= data[i].option2 %> <input type="radio" name="<%=i%>" id ="<%= data[i].option2 %>" value ="<%= data[i].option2 %>"> <span class="checkmark"></span> </label> 
+                <br/>
+                <label class="options"><%= data[i].option3 %> <input type="radio" name="<%=i%>" id ="<%= data[i].option3 %>" value ="<%= data[i].option3 %>"> <span class="checkmark"></span> </label> 
+                <br/>
+                <label class="options"><%= data[i].option4 %> <input type="radio" name="<%=i%>" id ="<%= data[i].option4 %>" value ="<%= data[i].option4 %>"> <span class="checkmark"></span> </label>
+                <br/>
+             </div>
+        </div>
+    </div>
+    <% } %>
+    <div class="d-flex align-items-center pt-3">
+        <div class="ml-auto mr-sm-5"> <button class="btn btn-success">Submit</button> </div>
+    </div>
+</body>
