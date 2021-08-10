@@ -12,7 +12,6 @@ $(document).ready(function(){
             {
                 if ( response.success )
                 {
-                    alert("Got success message!");
                     window.location = "http://localhost:3000/quiz_attempt";
                 }
                 else

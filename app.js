@@ -107,6 +107,9 @@ appController.pick_student_quiz_post);
 app.get('/quiz_attempt',authenticator.student_dashboard_authenticator,
 appController.quiz_attempt_get);
 
-app.post('/quiz_attempt');
+app.post('/quiz_attempt',authenticator.student_dashboard_authenticator,
+appController.quiz_attempt_post);
+
+
 app.listen(3000,console.log(`Listening on port 3000`));
 app.get('/');

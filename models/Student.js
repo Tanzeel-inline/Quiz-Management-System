@@ -30,6 +30,10 @@ const studentSchema = new schema({
     },
     courses: [{
         type: String
+    }],
+    quiz: [{
+        id: String,
+        marks: Number
     }]
 });
 

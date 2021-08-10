@@ -602,6 +602,7 @@ exports.quiz_attempt_get = async(req,res)=>{
     //Checking if quiz exists for that course or not
     let quiz = await QuizModel.findOne({courseCode: course.courseCode, title: req.session.title});
 
+    req.session.quiz_id = quiz._id;
     console.log(`[Quiz attempt get]: Course Code for the selected course is ${course.courseCode}`);
 
     if ( !quiz )
@@ -616,7 +617,6 @@ exports.quiz_attempt_get = async(req,res)=>{
     let options2 = quiz.option2;
     let options3 = quiz.option3;
     let options4 = quiz.option4;
-    let answers = quiz.answer;
     console.log(`[Quiz attempt get]: Availible quizzes are : ${questions}`);
     var data = [];
     for ( var i = 0 ; i < questions.length ; i++ )
@@ -631,3 +631,55 @@ exports.quiz_attempt_get = async(req,res)=>{
     }
     res.render('../views/quiz_attempt.ejs',{data : data});
 };
+
+exports.quiz_attempt_post = async(req, res)=>{
+
+    console.log(`[QUIZ ATTEMPT POST]:\nMy running\n`);
+    
+    //Validating the student
+    let student = await StudentModel.findOne({email: req.session.email});
+    if ( !student )
+    {
+        console.log(`[Quiz Attempt post] : ${req.session.email} identification failed!`)
+        //delete req.session
+        req.session.email = null;
+        req.session.isAuth = null;
+        req.session.isStudent = null;
+        req.session.course = null;
+        req.session.title = null;
+        req.session.quiz_id = null;
+        res.redirect('/student');
+        return;
+    }
+    //Getting the answer sheet from the student
+    const {answers} = req.body;
+    console.log(`[QUIZ ATTEMPT POST]:\nAnswer sheet: ${answers}\n`);
+    let total_point = 0;
+    
+    //Calculating the student marks
+    let quiz = await QuizModel.findOne({_id : req.session.quiz_id});
+    if ( !quiz )
+    {
+        res.send({success: false});
+    }
+    let answers_sheet = quiz.answer;
+    console.log(`[QUIZ ATTEMPT POST]:\n Actual Answer sheet: ${answers}\n`);
+    for ( var i = 0 ; i < answers_sheet.length ; i++ )
+    {
+        if ( answers[i] )
+        {
+            if ( answers_sheet[i] == answers[i] )
+            {
+                total_point++;
+            }
+            console.log(answers_sheet[i]);
+        }
+    }
+    var newQuiz = {id: student._id + '' , marks: total_point};
+    student.quiz.push(newQuiz);
+    await student.save();
+    //Adding the attempt quiz in student database
+    StudentModel.updateOne({_id : student._id},{$push: {}})
+    console.log(`[QUIZ ATTEMPT POST]:\nTotal points: ${total_point}\n`);
+    res.send({success : true});
+}
