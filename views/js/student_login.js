@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $("#login").click(function(){
+    $("#login").click(function(e){
+		e.preventDefault();
         console.log('Login clicked!');
         var email = $("#email").val();
         var password = $("#password").val();

@@ -216,7 +216,7 @@ input[type="radio"]:checked ~ .bullet .line.seven{
 }
 
 button {
-    position: absolute;
+    position: relative;
     background: #30551c;
     border: 0;
     padding: 14px 42px;

@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $("#login").click(function(){
+    $("#login").click(function(e){
+		e.preventDefault();
         var email = $("#email").val();
         var password = $("#password").val();
         // Checking for blank fields.

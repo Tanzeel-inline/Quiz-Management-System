@@ -2,12 +2,17 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/select_student_course.css">
-  <script type="text/javascript" src="js/select_student_course.js"></script>
-  <title>Choose course Student</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<!-- Latest compiled JavaScript -->
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/select_student_course.css">
+	<script type="text/javascript" src="js/select_student_course.js"></script>
+	<title>Choose course Student</title>
 </head>
 
 <body>
@@ -32,11 +37,7 @@
         <% }); %>
       </ul>
     </div>
-    <br/>
-    <br/>
-    <br/>
-    <div class="cntr">
-      <button id ="btn" name = "btn" ><a href="http://localhost:3000/pick_student_course">Change</a></button>
-    </div>
+	<button type="button" class="btn btn-success"><a href="http://localhost:3000/pick_student_course">Change course</a></button>
+	<button type="button" class="btn btn-success"><a href="http://localhost:3000/logout">Logout</a></button>
 </body>
 </html>

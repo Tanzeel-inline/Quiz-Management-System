@@ -110,6 +110,6 @@ appController.quiz_attempt_get);
 app.post('/quiz_attempt',authenticator.student_dashboard_authenticator,
 appController.quiz_attempt_post);
 
-
+app.get('/logout',appController.logout);
 app.listen(3000,console.log(`Listening on port 3000`));
 app.get('/');

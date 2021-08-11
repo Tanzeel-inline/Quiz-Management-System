@@ -8,7 +8,7 @@ const QuizModel = require('../models/Quiz');
 const Course = require('../models/Course');
 
 exports.homepage_get = (req,res)=> {
-    delete req.session;
+    req.session.destroy();
     res.sendFile(path.join(__dirname,'../views','home.html'));
 };
 
@@ -20,7 +20,7 @@ exports.homepage_post = (req,res)=> {
 
 //Teacher Login session Code
 exports.teacher_get = (req,res)=> {
-    delete req.session;
+    req.session.destroy();
     res.sendFile(path.join(__dirname,'../views','teacher_login.html'));
 };
 
@@ -59,7 +59,7 @@ exports.teacher_post = async (req,res)=>{
 
 //Student Login Code
 exports.student_get = (req,res)=> {
-    delete req.session;
+    req.session.destroy();
     res.sendFile(path.join(__dirname,'../views','student_login.html'));
 };
 
@@ -77,6 +77,7 @@ exports.student_post = async (req,res)=> {
 	{
 		console.log("Student Login Post: Student email not found!");
 		res.send({success : false});
+		return;
 	}
 	//Email exist in the database, assign session to the user and forward the teacher to the assign courses screen if it's first time login
     //Check the password here
@@ -105,18 +106,7 @@ exports.quiz_maker_get = async (req,res)=>{
     console.log(`[Quiz maker get]: Course is : ${course_selected}`);
     console.log(`[Quiz maker get]: Teacher is : ${teacher_email}`);
     let teacher = await TeacherModel.findOne({email: teacher_email});
-    //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
-    if ( !teacher )
-    {
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isTeacher = null;
-        req.session.course = null;
-        console.log(`[Quiz maker get]: Couldn't validate the teacher`);
-        res.redirect('http://localhost:3000/teacher');
-        return;
-    }
-    else if ( req.session.course == null )
+    if ( req.session.course == null )
     {
         res.redirect('http://localhost:3000/select_course');
         return;
@@ -148,18 +138,7 @@ exports.quiz_maker_post = async(req,res)=> {
     console.log(`[Quiz maker post]: Course is : ${course_selected}`);
     console.log(`[Quiz maker post]: Teacher is : ${teacher_email}`);
     let teacher = await TeacherModel.findOne({email: teacher_email});
-    //Unknown error, somehow mail of teacher doesn't exist anymore or session contains invalid email
-    if ( !teacher )
-    {
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isTeacher = null;
-        req.session.course = null;
-        console.log(`[Quiz maker post]: Couldn't validate the teacher`);
-        res.redirect('http://localhost:3000/teacher');
-        return;
-    }
-    else if ( req.session.course == null )
+    if ( req.session.course == null )
     {
         res.redirect('http://localhost:3000/select_course');
         return;
@@ -385,17 +364,6 @@ exports.select_course_get = async (req, res)=>{
     //--------------------Work here to destroy session vairable---------------------------
     let teacher = await TeacherModel.findOne({email: req.session.email});
 
-    console.log(teacher.username);
-    if ( !teacher )
-    {
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isTeacher = null;
-        req.session.course = null;
-        res.redirect('/teacher');
-        return;
-    }
-
     let teacher_courses = await CourseModel.find({teacher: email});
     var courses_list = [];
     for ( var i = 0 ; i < teacher_courses.length ; i++ )
@@ -432,16 +400,6 @@ exports.select_student_course_get = async (req, res)=>
 {
     //Validating the student
     let student = await StudentModel.findOne({email: req.session.email});
-    if ( !student )
-    {
-        console.log('Select student course get : student not found!');
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isStudent = null;
-        req.session.course = null;
-        res.redirect('/student');
-        return;
-    }
     //Displaying all the courses to the student that he picked
     var courses_list = [];
     console.log(`[SELECT STUDENT COURSE GET]: Courses of the students are : ${student.email}`);
@@ -465,17 +423,6 @@ exports.select_student_course_get = async (req, res)=>
 
 exports.select_student_course_post = async(req, res)=>{
     let student = await StudentModel.findOne({email: req.session.email});
-    console.log(student.username);
-    if ( !student )
-    {
-        console.log(`[Select student course post] : ${req.session.email} identification failed!`)
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isStudent = null;
-        req.session.course = null;
-        res.redirect('/student');
-        return;
-    }
     //Setting the session variable for the student, so that we can use it later if the student directly goes to the quiz attempt screen
     console.log(`[Select Student Course Post] : Selected course is : ${req.body.course}`);
     req.session.course = req.body.course;
@@ -499,15 +446,6 @@ exports.pick_student_course_post = async(req, res)=>{
     let courses = req.body;
     //Validating the student
     let student = await StudentModel.findOne({email: req.session.email});
-    if ( !student )
-    {
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isStudent = null;
-        req.session.course = null;
-        res.redirect('/student');
-        return;
-    }
     //Updating the student courses
     let update_student_courses = await StudentModel.updateOne({_id: student._id}, {courses: courses});
     if ( !update_student_courses )
@@ -519,21 +457,11 @@ exports.pick_student_course_post = async(req, res)=>{
     res.send({success : true});
 };
 
-
 exports.pick_student_quiz_get = async(req,res)=>{
     var course = req.session.course;
     //Validating the student
     console.log(`[PICK STUDENT QUIZ GET] : VALIDATING THE STUDENT`);
     let student = await StudentModel.findOne({email: req.session.email});
-    if ( !student )
-    {
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isStudent = null;
-        req.session.course = null;
-        res.redirect('/student');
-        return;
-    }
     //Validating the course Code
     console.log(`[PICK STUDENT QUIZ GET] : VALIDATING THE COURSE CODE`);
     let courseCod = await CourseModel.findOne({courseName : course});
@@ -562,24 +490,12 @@ exports.pick_student_quiz_get = async(req,res)=>{
     res.render('../views/select_student_title.ejs',{data : quizzes_name});
 };
 
-
 exports.pick_student_quiz_post = async(req, res)=>{
 
     console.log(`[Select student quiz post] : ${req.session.email} tried to attempt quiz`);
     console.log(`[Select student quiz post] : Title is : ${req.body.title}`);
     //Validating the student
     let student = await StudentModel.findOne({email: req.session.email});
-    if ( !student )
-    {
-        console.log(`[Select student quiz post] : ${req.session.email} identification failed!`)
-        req.session.email = null;
-        req.session.isAuth = null;
-        req.session.isStudent = null;
-        req.session.course = null;
-        req.session.title = null;
-        res.redirect('/student');
-        return;
-    }
 
     //Setting the session variable for the student, so that we can use it later if the student directly goes to the quiz attempt screen
     console.log(`[Select Student Quiz Post] : Selected title is : ${req.body.title}`);
@@ -587,6 +503,7 @@ exports.pick_student_quiz_post = async(req, res)=>{
     console.log(req.session.title);
     res.send({success: true});
 };
+
 exports.quiz_attempt_get = async(req,res)=>{
 
     //Tried to select the wrong course
@@ -683,3 +600,8 @@ exports.quiz_attempt_post = async(req, res)=>{
     console.log(`[QUIZ ATTEMPT POST]:\nTotal points: ${total_point}\n`);
     res.send({success : true});
 }
+
+exports.logout = async(req,res)=>{
+	req.session.destroy();
+	res.redirect('/');
+};

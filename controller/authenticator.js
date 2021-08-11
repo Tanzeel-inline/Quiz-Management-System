@@ -1,7 +1,15 @@
 exports.teacher_dashboard_authenticator = (req, res, next)=> {
     if ( req.session.isTeacher && req.session.isAuth )
     {
-        console.log("Authenticator of teacher passed!");
+        
+		let teacher = await TeacherModel.findOne({email: req.session.email});
+		if ( !teacher )
+		{
+			req.session.destroy();
+			res.redirect('/teacher');
+			return;
+		}
+		console.log("Authenticator of teacher passed!");
         next();
     }
     else
@@ -15,7 +23,14 @@ exports.teacher_dashboard_authenticator = (req, res, next)=> {
 exports.student_dashboard_authenticator = (req, res, next)=> {
     if ( req.session.isStudent && req.session.isAuth )
     {
-        console.log("Authenticator of student passed!");
+		let student = await StudentModel.findOne({email: req.session.email});
+		if ( !student )
+		{
+			req.session.destroy();
+			res.redirect('/student');
+			return;
+		}
+		console.log("Authenticator of student passed!");
         next();
     }
     else
