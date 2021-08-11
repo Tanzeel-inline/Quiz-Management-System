@@ -12,8 +12,26 @@ const bcrypt = require('bcryptjs');
 const appController = require('./controller/appController');
 const authenticator = require('./controller/authenticator');
 const cookieParser = require('cookie-parser');
-//const csurf = require('csurf')
-//const csurfProtection = csurf({cookie : { httpOnly : true}});
+//Swagger
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+// Extended: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: "Quiz API",
+            description: "Quiz API Information",
+            contact: {
+                name: "Tanzeel Ahmed"
+            }
+        },
+        servers: ["http://localhost:3000"]
+    },
+    apis: ["app.js"]
+}
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
 //Database address
 const connectionURI = 'mongodb://localhost/qms';
 connecter(connectionURI);
@@ -24,6 +42,7 @@ app.use(express.static(path.join(__dirname,'views')));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(cookieParser());
+app.use("/api-docs",swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 app.set("view engine", "ejs");
 
 //To store session variable
@@ -47,26 +66,237 @@ app.use(session({
     res.send("CSRF attack detected!");
 });*/
 
+
+//Routes
+/**
+ * @swagger
+ * /:
+ *  get:
+ *      summary: Use to request the homepage
+ *      responses:
+ *          '200':
+ *              description: Opens homepage successfully
+ */
 app.get('/' ,appController.homepage_get);
 
+/**
+ * @swagger
+ * /:
+ * post:
+ *  description: Use to go to teacher or student login page
+ *  responses:
+ *      '200':
+ *          description: OK
+ */
 app.post('/',appController.homepage_post);
 
+/**
+ * @swagger
+ * /student:
+ *  get:
+ *      summary: Use to request student login page
+ *      responses:
+ *          '200':
+ *              description: Opens student login page successfully
+ */
 app.get('/student',appController.student_get);
 
+/**
+ *  @swagger
+ *  /student:
+ *   post:
+ *      summary: Logins the student to system
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              email: user
+ *              description: The student to login
+ *              schema:
+ *                  type: object
+ *                  required:
+ *                      -   email
+ *                      -   password
+ *                  properties:
+ *                      email: 
+ *                          type: String
+ *                          example: example@xyz.com
+ *                      password:
+ *                          type: String,
+ *                          maxLength: 5,
+ *                          minLength: 10,
+ *                          example: 123456
+ *              responses: 
+ *                  201:
+ *                      description: Login'ed to the system
+ */
 app.post('/student',appController.student_post);
 
+/**
+ * @swagger
+ * /student_signup:
+ *  get:
+ *      description: Use to request teacher signup page
+ *      responses:
+ *          '200':
+ *              description: Opens teacher signup page successfully
+ */
 app.get('/student_signup',appController.student_get_signup);
 
+/**
+ *  @swagger
+ *  /student_signup:
+ *   post:
+ *      summary: Creates a new student
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              email: user
+ *              description: The student want to sign up
+ *              schema:
+ *                  type: object
+ *                  required:
+ *                      -   username
+ *                      -   email
+ *                      -   password
+ *                      -   contact
+ *                      -   address
+ *                  properties:
+ *                      username:
+ *                          type: String
+ *                          example: tornado
+ *                      email: 
+ *                          type: String
+ *                          example: example@xyz.com
+ *                      password:
+ *                          type: String,
+ *                          maxLength: 5,
+ *                          minLength: 10,
+ *                          example: 123456
+ *                      contact:
+ *                          type: String,
+ *                          length: 11,
+ *                          example: 03061515996
+ *                      address:
+ *                          type: String,
+ *                          maxLength: 100,
+ *                          example: House No. asd, Street No. 7, Sector No.11-b, Islamabad.
+ *              responses: 
+ *                  201:
+ *                      description: Created a new student
+ */
 app.post('/student_signup',appController.student_post_signup);
 
+/**
+ * @swagger
+ * /teacher_signup:
+ *  get:
+ *      description: Use to request teacher signup page
+ *      responses:
+ *          '200':
+ *              description: Opens teacher signup page successfully
+ */
 app.get('/teacher_signup',appController.teacher_get_signup);
 
+
+/**
+ *  @swagger
+ *  /teacher_signup:
+ *   post:
+ *      summary: Creates a new teacher
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              email: user
+ *              description: The teacher want to sign up
+ *              schema:
+ *                  type: object
+ *                  required:
+ *                      -   username
+ *                      -   email
+ *                      -   password
+ *                      -   contact
+ *                      -   address
+ *                  properties:
+ *                      username:
+ *                          type: String
+ *                          example: tornado
+ *                      email: 
+ *                          type: String
+ *                          example: example@xyz.com
+ *                      password:
+ *                          type: String,
+ *                          maxLength: 5,
+ *                          minLength: 10,
+ *                          example: 123456
+ *                      contact:
+ *                          type: String,
+ *                          length: 11,
+ *                          example: 03061515996
+ *                      address:
+ *                          type: String,
+ *                          maxLength: 100,
+ *                          example: House No. asd, Street No. 7, Sector No.11-b, Islamabad.
+ *              responses: 
+ *                  201:
+ *                      description: Created a new student
+ */
 app.post('/teacher_signup',appController.teacher_post_signup);
 
+/**
+ * @swagger
+ * /teacher:
+ *  get:
+ *      description: Use to request teacher login page
+ *      responses:
+ *          '200':
+ *              description: Opens teacher login page successfully
+ */
 app.get('/teacher', appController.teacher_get);
 
+
+/**
+ *  @swagger
+ *  /teacher:
+ *   post:
+ *      summary: Logins the teacher to system
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              email: user
+ *              description: The teacher to login
+ *              schema:
+ *                  type: object
+ *                  required:
+ *                      -   email
+ *                      -   password
+ *                  properties:
+ *                      email: 
+ *                          type: String
+ *                          example: example@xyz.com
+ *                      password:
+ *                          type: String,
+ *                          maxLength: 5,
+ *                          minLength: 10,
+ *                          example: 123456
+ *              responses: 
+ *                  201:
+ *                      description: Login'ed to the system
+ */
 app.post('/teacher', appController.teacher_post);
 
+/**
+ * @swagger
+ * /course_pick:
+ *  get:
+ *      description: Update the courses of the teacher
+ *      responses:
+ *          '200':
+ *              description: Opens courses list for teacher
+ */
 app.get('/course_pick',authenticator.teacher_dashboard_authenticator,
  appController.course_pick_get);
 

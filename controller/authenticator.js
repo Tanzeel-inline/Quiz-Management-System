@@ -1,4 +1,4 @@
-exports.teacher_dashboard_authenticator = (req, res, next)=> {
+exports.teacher_dashboard_authenticator = async (req, res, next)=> {
     if ( req.session.isTeacher && req.session.isAuth )
     {
         
@@ -20,7 +20,7 @@ exports.teacher_dashboard_authenticator = (req, res, next)=> {
 
 
 
-exports.student_dashboard_authenticator = (req, res, next)=> {
+exports.student_dashboard_authenticator = async (req, res, next)=> {
     if ( req.session.isStudent && req.session.isAuth )
     {
 		let student = await StudentModel.findOne({email: req.session.email});

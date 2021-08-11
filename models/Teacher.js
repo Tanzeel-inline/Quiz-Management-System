@@ -19,10 +19,8 @@ const teacherSchema = new schema({
     password: {
         type: String,
         required: true,
-    },
-    date:{
-        type: Date,
-        default: Date.now,
+        minLength: 5,
+        maxLength: 10
     },
     contact: {
         type: String,
