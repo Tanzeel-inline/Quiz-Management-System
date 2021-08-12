@@ -105,7 +105,7 @@ app.get('/student',appController.student_get);
  *  @swagger
  *  /student:
  *   post:
- *      summary: Logins the student to system
+ *      summary: Logins the student to system and returns the session cookie
  *      consumes: 
  *          - application/json
  *      parameters:
@@ -261,7 +261,7 @@ app.get('/teacher', appController.teacher_get);
  *  @swagger
  *  /teacher:
  *   post:
- *      summary: Logins the teacher to system
+ *      summary: Logins the teacher to system and returns the session cookie
  *      consumes: 
  *          - application/json
  *      parameters:
@@ -295,23 +295,111 @@ app.post('/teacher', appController.teacher_post);
  *      description: Update the courses of the teacher
  *      responses:
  *          '200':
- *              description: Opens courses list for teacher
+ *              description: Opens availible courses list for teacher
  */
 app.get('/course_pick',authenticator.teacher_dashboard_authenticator,
  appController.course_pick_get);
 
+/**
+ *  @swagger
+ *  /select_course:
+ *   post:
+ *      summary: Returns the course of whom teacher wants to make quiz and set the session course to course
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      courses_list: 
+ *                          type: String
+ *                          example: [Management, Marketing]
+ *              responses: 
+ *                  201:
+ *                      description: Teacher teaching the subjects updated in the system
+ */
 app.post('/course_pick',authenticator.teacher_dashboard_authenticator,
 appController.coures_pick_post);
 
+/**
+ * @swagger
+ * /student:
+ *  get:
+ *      summary: Use to request a course page for the teacher from where he can select the course of whom he wants to make the quiz
+ *      responses:
+ *          '200':
+ *              description: Opens the list of the courses that teacher is currently teaching
+ */
 app.get('/select_course',authenticator.teacher_dashboard_authenticator,
 appController.select_course_get);
 
+/**
+ *  @swagger
+ *  /select_course:
+ *   post:
+ *      summary: Returns the course of whom teacher wants to make quiz and set the session course to course
+ *      consumes: 
+ *          - application/json
+ *      parameters:
+ *          -   in: body
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      course: 
+ *                          type: String
+ *                          example: Management
+ *              responses: 
+ *                  201:
+ *                      description: Session course updated
+ */
 app.post('/select_course',authenticator.teacher_dashboard_authenticator,
 appController.select_course_post);
 
+/**
+ * @swagger
+ * /quiz_maker:
+ *  get:
+ *      summary: Student Attempts the quiz of the selected course and title
+ * 		parameters:
+ * 			-	out: body
+ * 				schema:
+ * 					type: object
+ * 					properties:
+ * 						questions:[
+ * 							type: String],
+ * 						option1:[
+ * 							type: String],
+ * 						option2:[
+ * 							type: String],
+ * 						option3:[
+ * 							type: String],
+ * 						option4:[
+ * 							type: String]
+ * 						
+ *      responses:
+ *          '200':
+ *              description: Opens the quiz so that student can attempt it
+ */
 app.get('/quiz_maker',authenticator.teacher_dashboard_authenticator,
 appController.quiz_maker_get);
 
+/**
+ * @swagger
+ * /quiz_maker:
+ *  post:
+ *      summary: Student submits the quiz of the selected course and title
+ * 		parameters:
+ * 			-	out: body
+ * 				schema:
+ * 					type: object
+ * 					properties:
+ * 						answer:[
+ * 							type: String],
+ *      responses:
+ *          '200':
+ *              description: Opens the quiz so that student can attempt it
+ */
 app.post('/quiz_maker',authenticator.teacher_dashboard_authenticator,
 appController.quiz_maker_post);
 
@@ -340,6 +428,15 @@ appController.quiz_attempt_get);
 app.post('/quiz_attempt',authenticator.student_dashboard_authenticator,
 appController.quiz_attempt_post);
 
+/**
+ * @swagger
+ * /logout:
+ *  get:
+ *      summary: Use to log out of the session
+ *      responses:
+ *          '200':
+ *              description: Successfully logged out of the system
+ */
 app.get('/logout',appController.logout);
 app.listen(3000,console.log(`Listening on port 3000`));
 app.get('/');
