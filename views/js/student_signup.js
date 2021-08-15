@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $("#signup").click(function(){
+    $("#signup").click(function(e){
+		e.preventDefault();
         var email = $("#email").val();
         var username = $("#username").val();
         var password = $("#password").val();
@@ -48,12 +49,8 @@ $(document).ready(function(){
             });
         }
     });
-    $('#login').click(function(){
-        window.location = "http://localhost:3000/student";
-    });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        console.log("I was called");
         return regex.test(email);
     }
     function contactLength(contact)

@@ -1,3 +1,5 @@
+const TeacherModel = require('../models/Teacher');
+const StudentModel = require('../models/Student.js');
 exports.teacher_dashboard_authenticator = async (req, res, next)=> {
     if ( req.session.isTeacher && req.session.isAuth )
     {

@@ -12,13 +12,7 @@ exports.homepage_get = (req,res)=> {
     res.sendFile(path.join(__dirname,'../views','home.html'));
 };
 
-exports.homepage_post = (req,res)=> {
-    res.send('success');
-    const {user} = req.body;
-    console.log(user);
-};
-
-//Teacher Login session Code
+//Teacher Login Code
 exports.teacher_get = (req,res)=> {
     req.session.destroy();
     res.sendFile(path.join(__dirname,'../views','teacher_login.html'));
@@ -29,8 +23,6 @@ exports.teacher_post = async (req,res)=>{
         let {email,password} = req.body;
         email = email.trim();
         password = password.trim();
-        //We don't need to validate password and email? since we will be checking them in the data
-        //In case we need to validate the email and password here, verify the data here
 
         //Teacher can login both using email, we have to check whether the email is correct
         //Email doesn't exist in database
@@ -64,53 +56,105 @@ exports.teacher_post = async (req,res)=>{
     }
 };
 
-//Student Login Code
-exports.student_get = (req,res)=> {
-    req.session.destroy();
-    res.sendFile(path.join(__dirname,'../views','student_login.html'));
+//Teacher Sign up Code
+exports.teacher_get_signup = (req,res)=>{
+    res.sendFile(path.join(__dirname,'../views','teacher_signup.html')); 
 };
 
-exports.student_post = async (req,res)=> {
-    try
-    {
-        //Validate the user input here
-        //Set the session variable if user has given correct credintials
-        console.log(req.body);
-        let {email,password} = req.body;
-        email = email.trim();
-        password = password.trim();
+exports.teacher_post_signup = async (req,res)=>{
 
-        let student = await StudentModel.findOne({email});
-
-        if ( !student )
+    try {
+        //Validate if data is correct
+        const schema = Joi.object().keys({
+            email: Joi.string().trim().email().required() ,
+            username: Joi.string().trim().max(60).required() ,
+            password: Joi.string().min(5).max(10).required() ,
+            contact: Joi.string().length(11).required() ,
+            address: Joi.string().max(100).required()
+        });
+        schema.validate(req.body, (err,result)=>{
+            if ( err )
+            {
+                res.send({success: false});
+                return;
+            }
+        });
+        //Check if email already exist 
+        const{email,username,password,contact,address} = req.body;
+        
+        let teacher = await TeacherModel.findOne({email});
+        //Send failure message if exists
+        if ( teacher )
         {
-            console.log("Student Login Post: Student email not found!");
-            res.send({success : false});
-            return;
-        }
-        //Email exist in the database, assign session to the user and forward the teacher to the assign courses screen if it's first time login
-        //Check the password here
-        const pwMatch = await bcrypt.compare(password, student.password);
-        if ( !pwMatch )
-        {
-            console.log(`Student Login ${email}: Password didn't match`);
             res.send({success: false});
             return;
         }
-        //Creating session variables
-        req.session.isAuth = true;
-        req.session.isStudent = true;
-        req.session.isTeacher = false;
-        req.session.email = email;
-        console.log(`Student Login Post : ${email} logged in successfully!`);
-        res.send({success: true});
-    } 
-    catch(err)
+        //else (add the data to the database) and send success message
+        const pwHash = await bcrypt.hash(password, 12);
+
+        teacher = new TeacherModel({
+            email,
+            username,
+            password: pwHash,
+            contact,
+            address,
+        });
+
+        await teacher.save();
+        
+        console.log('Teacher post signup: Teacher added to the database');
+        console.log(req.body);
+        res.send({success:true});
+    } catch(err)
     {
         console.log(err);
-        res.send({success : false});
+        res.send({success:false});
     }
     
+};
+
+//Teacher selecting course to make quiz of Code
+exports.select_course_get = async (req, res)=>{
+
+    try {
+        const email = req.session.email;
+        console.log(email);
+
+        let teacher_courses = await CourseModel.find({teacher: email});
+        var courses_list = [];
+		console.log(`Teacher courses are : ${teacher_courses.length}`);
+		if ( !teacher_courses || teacher_courses.length <= 0 )
+		{
+			res.redirect('http://localhost:3000/course_pick');
+			return;
+		}
+        for ( var i = 0 ; i < teacher_courses.length ; i++ )
+        {
+            courses_list.push(teacher_courses[i].courseCode);
+            //console.log(teacher_courses[i].courseCode);
+        }
+        
+        res.render('../views/select_course.ejs', {data : courses_list});
+    } catch(err)
+    {
+        console.log(err);
+        res.redirect('http://localhost:3000/teacher');
+    }
+    
+};
+
+exports.select_course_post = async (req, res)=>{
+
+    try{
+		
+        req.session.course = req.body.course;
+        console.log(req.session.course);
+        res.send({success: true});
+    } catch(err)
+    {
+        console.log(err);
+        res.send({success: false});
+    }
     
 };
 
@@ -136,10 +180,7 @@ exports.quiz_maker_get = async (req,res)=>{
         //Unknown error but will check
         if ( !course_validator )
         {
-            req.session.email = null;
-            req.session.isAuth = null;
-            req.session.isTeacher = null;
-            req.session.course = null;
+            req.session.destroy();
             console.log(`[Quiz maker get]: Couldn't validate the course`);
             res.redirect('http://localhost:3000/teacher');
             return;
@@ -305,6 +346,59 @@ exports.coures_pick_post = async (req,res)=>{
 };
 
 
+
+
+
+//Student Login Code
+exports.student_get = (req,res)=> {
+    req.session.destroy();
+    res.sendFile(path.join(__dirname,'../views','student_login.html'));
+};
+
+exports.student_post = async (req,res)=> {
+    try
+    {
+        //Validate the user input here
+        //Set the session variable if user has given correct credintials
+        console.log(req.body);
+        let {email,password} = req.body;
+        email = email.trim();
+        password = password.trim();
+
+        let student = await StudentModel.findOne({email});
+
+        if ( !student )
+        {
+            console.log("Student Login Post: Student email not found!");
+            res.send({success : false});
+            return;
+        }
+        //Email exist in the database, assign session to the user and forward the teacher to the assign courses screen if it's first time login
+        //Check the password here
+        const pwMatch = await bcrypt.compare(password, student.password);
+        if ( !pwMatch )
+        {
+            console.log(`Student Login ${email}: Password didn't match`);
+            res.send({success: false});
+            return;
+        }
+        //Creating session variables
+        req.session.isAuth = true;
+        req.session.isStudent = true;
+        req.session.isTeacher = false;
+        req.session.email = email;
+        console.log(`Student Login Post : ${email} logged in successfully!`);
+        res.send({success: true});
+    } 
+    catch(err)
+    {
+        console.log(err);
+        res.send({success : false});
+    }
+    
+    
+};
+
 exports.student_get_signup = (req,res)=>{
 	res.sendFile(path.join(__dirname,'../views','student_signup.html'));
 };
@@ -360,119 +454,6 @@ exports.student_post_signup = async (req,res)=>{
     }
 	
 };
-//Teacher Sign up Code
-exports.teacher_get_signup = (req,res)=>{
-    res.sendFile(path.join(__dirname,'../views','teacher_signup.html')); 
-};
-
-exports.teacher_post_signup = async (req,res)=>{
-
-    try {
-        //Validate if data is correct
-        const schema = Joi.object().keys({
-            email: Joi.string().trim().email().required() ,
-            username: Joi.string().trim().max(60).required() ,
-            password: Joi.string().min(5).max(10).required() ,
-            contact: Joi.string().length(11).required() ,
-            address: Joi.string().max(100).required()
-        });
-        schema.validate(req.body, (err,result)=>{
-            if ( err )
-            {
-                res.send({success: false});
-                return;
-            }
-        });
-        //Check if email already exist 
-        const{email,username,password,contact,address} = req.body;
-        
-        let teacher = await TeacherModel.findOne({email});
-        //Send failure message if exists
-        if ( teacher )
-        {
-            res.send({success: false});
-            return;
-        }
-        //else (add the data to the database) and send success message
-        const pwHash = await bcrypt.hash(password, 12);
-
-        teacher = new TeacherModel({
-            email,
-            username,
-            password: pwHash,
-            contact,
-            address,
-        });
-
-        await teacher.save();
-        
-        console.log('Teacher post signup: Teacher added to the database');
-        console.log(req.body);
-        res.send({success:true});
-    } catch(err)
-    {
-        console.log(err);
-        res.send({success:false});
-    }
-    
-};
-
-//Teacher selecting course to make quiz of Code
-exports.select_course_get = async (req, res)=>{
-
-    try {
-        const email = req.session.email;
-        console.log(email);
-        //Check if teacher exist in database, in case if teacher is removed from database and he does have session variable
-        //We will destroy session variable for that teacher and redirect him to login page
-        //--------------------Work here to destroy session vairable---------------------------
-        let teacher = await TeacherModel.findOne({email: req.session.email});
-
-        let teacher_courses = await CourseModel.find({teacher: email});
-        var courses_list = [];
-        for ( var i = 0 ; i < teacher_courses.length ; i++ )
-        {
-            courses_list.push(teacher_courses[i].courseCode);
-            //console.log(teacher_courses[i].courseCode);
-        }
-        
-        res.render('../views/select_course.ejs', {data : courses_list});
-    } catch(err)
-    {
-        console.log(err);
-        res.redirect('http://localhost:3000/teacher');
-    }
-    
-};
-
-exports.select_course_post = async (req, res)=>{
-
-    try{
-        const email = req.session.email;
-        console.log("I am inside select course post function");
-        console.log(email);
-        console.log(req.body.course);
-        let teacher = await TeacherModel.findOne({email: req.session.email});
-        console.log(teacher.username);
-        if ( !teacher )
-        {
-            req.session.email = null;
-            req.session.isAuth = null;
-            req.session.isTeacher = null;
-            req.session.course = null;
-            res.redirect('/teacher');
-            return;
-        }
-        req.session.course = req.body.course;
-        console.log(req.session.course);
-        res.send({success: true});
-    } catch(err)
-    {
-        console.log(err);
-        res.send({success: false});
-    }
-    
-};
 
 exports.select_student_course_get = async (req, res)=>
 {
@@ -483,7 +464,7 @@ exports.select_student_course_get = async (req, res)=>
         var courses_list = [];
         console.log(`[SELECT STUDENT COURSE GET]: Courses of the students are : ${student.email}`);
 
-        if ( student.courses )
+        if ( student.courses && student.courses.length > 0 )
         {
             for ( var i = 0 ; i < student.courses.length ; i++ )
             {
@@ -508,7 +489,6 @@ exports.select_student_course_get = async (req, res)=>
 
 exports.select_student_course_post = async(req, res)=>{
     try {
-        let student = await StudentModel.findOne({email: req.session.email});
         //Setting the session variable for the student, so that we can use it later if the student directly goes to the quiz attempt screen
         console.log(`[Select Student Course Post] : Selected course is : ${req.body.course}`);
         req.session.course = req.body.course;
@@ -524,6 +504,9 @@ exports.select_student_course_post = async(req, res)=>{
 
 exports.pick_student_course_get = async(req, res)=>{
     try {
+		//Re-setting the quiz and course session variables once user has landed onto the student course page
+		req.session.quiz = null;
+		req.session.course = null;
         //Fetching all the courses from course schema and displaying to the student using ejs file
         var courses_name = [];
         let courses = await CourseModel.find();
@@ -562,19 +545,25 @@ exports.pick_student_course_post = async(req, res)=>{
     
 };
 
+//Get all the availible quizes by title
 exports.pick_student_quiz_get = async(req,res)=>{
 
     try {
+		//Re-setting the title now
+		req.session.title = null;
+		var course = req.session.course;
+		if ( !req.session.course )
+		{
+			res.send({success: false, error: 'No course selected yet!'});
+            return;
+		}
         var course = req.session.course;
-        //Validating the student
-        console.log(`[PICK STUDENT QUIZ GET] : VALIDATING THE STUDENT`);
-        let student = await StudentModel.findOne({email: req.session.email});
         //Validating the course Code
         console.log(`[PICK STUDENT QUIZ GET] : VALIDATING THE COURSE CODE`);
         let courseCod = await CourseModel.findOne({courseName : course});
         if ( !courseCod || courseCod.length <= 0 )
         {
-            res.send({success: false, error: 'Wrong course'});
+            res.send({success: false, error: `Course doesn't exist in the database`});
             return;
         }
         //Validating whether the quiz for that subject exist or not
@@ -605,10 +594,14 @@ exports.pick_student_quiz_get = async(req,res)=>{
 
 exports.pick_student_quiz_post = async(req, res)=>{
     try {
+
+		if ( !req.session.course )
+		{
+			res.send({success: false, error: 'No course selected yet!'});
+            return;
+		}
         console.log(`[Select student quiz post] : ${req.session.email} tried to attempt quiz`);
         console.log(`[Select student quiz post] : Title is : ${req.body.title}`);
-        //Validating the student
-        let student = await StudentModel.findOne({email: req.session.email});
 
         //Setting the session variable for the student, so that we can use it later if the student directly goes to the quiz attempt screen
         console.log(`[Select Student Quiz Post] : Selected title is : ${req.body.title}`);
@@ -627,17 +620,34 @@ exports.quiz_attempt_get = async(req,res)=>{
     try{
         //Tried to select the wrong course
         console.log(`[Quiz attempt get]: ${req.session.course}`);
+		//Course doesn't exist yet
+		if ( !req.session.course )
+        {
+            res.send({success: false, error: `Course isn't selected yet!`});
+            return;
+        }
+		//Getting course details from database
         let course = await CourseModel.findOne({courseName: req.session.course});
         if ( !course )
         {
             res.send({success: false, error: 'No such course exist'});
             return;
         }
+		//Title doesn't exist yet
+		if ( !req.session.title )
+        {
+            res.send({success: false, error: `Title isn't selected yet!`});
+            return;
+        }
         console.log(`[Quiz attempt get]: Course Code for the selected course is ${course.courseCode}`);
 
         //Checking if quiz exists for that course or not
         let quiz = await QuizModel.findOne({courseCode: course.courseCode, title: req.session.title});
-
+		if ( !quiz )
+		{
+			res.send({success: false, error: 'No such quiz exist'});
+            return;
+		}
         req.session.quiz_id = quiz._id;
         console.log(`[Quiz attempt get]: Course Code for the selected course is ${course.courseCode}`);
 
@@ -646,7 +656,7 @@ exports.quiz_attempt_get = async(req,res)=>{
             res.send({success: false, error: 'No quiz made yet! Try again later'});
             return;
         }
-
+		console.log(`${quiz._id}`);
         console.log(`Quiz length is : ${quiz.length}`);
         let questions = quiz.question;
         let options1 = quiz.option1;
@@ -678,8 +688,13 @@ exports.quiz_attempt_post = async(req, res)=>{
 
     try {
         console.log(`[QUIZ ATTEMPT POST]:\nMy running\n`);
-    
-        //Validating the student
+		
+		//CSRF Attack can still happen and there should be three function which recevies and validate the corresponding session variables
+		if ( !req.session.title || !req.session.course || !req.session.quiz_id)
+		{
+			res.send({success: false});
+		}
+
         let student = await StudentModel.findOne({email: req.session.email});
         //Getting the answer sheet from the student
         const {answers} = req.body;
@@ -705,7 +720,7 @@ exports.quiz_attempt_post = async(req, res)=>{
                 console.log(answers_sheet[i]);
             }
         }
-        var newQuiz = {id: student._id + '' , marks: total_point};
+        var newQuiz = {id: quiz._id + '' , marks: total_point};
         student.quiz.push(newQuiz);
         await student.save();
         //Adding the attempt quiz in student database
@@ -720,6 +735,46 @@ exports.quiz_attempt_post = async(req, res)=>{
     
 }
 
+
+exports.quiz_stat_get = async(req,res)=>{
+
+	try{
+		const email = req.session.email
+		let student = await StudentModel.findOne({email});
+
+		var data = []; 
+		if ( student.quiz.length <= 0 )
+		{
+			res.sendFile("../views/empty_quiz.html");
+			return;
+		}
+		console.log(`Total quizess are : ${student.quiz.length}`);
+		for ( var i = 0 ; i < student.quiz.length ; i++ )
+		{
+			var mongoose = require('mongoose');
+			var id = mongoose.Types.ObjectId(student.quiz[i].id);
+			let quiz = await QuizModel.findOne({_id: id});
+			if ( !quiz)
+			{
+				console.log("[QUIZ STATS GET]: Some Error occured while finding quiz!");
+				res.sendFile("../views/empty_quiz.html");
+				return;
+			}
+			if ( quiz.courseCode != undefined )
+			{
+				console.log(`${quiz}`);
+				data.push({course: quiz.courseCode, title: quiz.title, total_marks: quiz.totalMark, marks: student.quiz[i].marks});
+			}
+		}
+		JSON.stringify(data);
+		res.render('../views/stats_quiz.ejs',{data: data});
+	}
+	catch(e)
+	{
+		console.log(e);
+		res.redirect('/student');
+	}
+};
 exports.logout = async(req,res)=>{
 	req.session.destroy();
 	res.redirect('/');

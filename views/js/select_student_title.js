@@ -16,7 +16,7 @@ $(document).ready(function(){
                 }
                 else
                 {
-                    alert("Something went wrong!");
+                    alert(response.error);
                     window.location = "http://localhost:3000/select_student_course";
                 }
             }

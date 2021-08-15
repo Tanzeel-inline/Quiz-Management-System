@@ -2,24 +2,30 @@
 <head>
     <title>Login</title>
     <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="css/teacher_dashboard.css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/teacher_dashboard.js"></script>
 </head>
-<body>
-<table>
-    <% data.forEach(function(dat) { %>
-        <tr>
-            <td>
-                <input type="checkbox" name="checkbox1" id ="checkbox1" value="<%= dat%>"/>
-            </td>
-            <td><%= dat%></td>
-        </tr>
-    <% }); %>
-        <tr>
-            <td colspan="2"><button id ="myButton">Select courses</button></td>
-        </tr>
-  </table>
-
+<body style="background-color: #76b852;color: white;font-family: cursive;">
+	<table class="table table-bordered" style="width: 50%;text-align: center;margin: auto;background-color: #4b8d23;margin-top: 30px;">
+		<thead class="thead-dark">
+		  <tr>
+			<th scope="col" style="font-size: x-large;">Selection</th>
+			<th scope="col" style="font-size: x-large;">Course Name</th>
+		  </tr>
+		</thead>
+		<tbody>
+			<% data.forEach(function(dat) { %>
+				<tr>
+					<td>
+						<input type="checkbox" name="checkbox1" id ="checkbox1" value="<%= dat%>"/>
+					</td>
+					<td><%= dat%></td>
+				</tr>
+			<% }); %>
+		</tbody>
+	  </table>
+	  <button id ="myButton" style="margin: auto; display: block;margin-top: 10px;background-color: #4b8d23;color: white;" type="button" class="btn btn-success">Select courses</button>
 </body>
 </html>

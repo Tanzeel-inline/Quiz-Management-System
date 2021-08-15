@@ -4,39 +4,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/select_student_title.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/select_student_title.js"></script>
   <title>Choose title</title>
 </head>
 
 <body>
-    <div class="continput">
-      <h1>Select Topic</h1>
-      <ul>
-        <% data.forEach(function(dat) { %>
-        <li>
-          <input type="radio" name="radio" id = "radio-1" value="<%= dat%>">
-          <label><%= dat%></label>
-          <div class="bullet">
-            <div class="line zero"></div>
-            <div class="line one"></div>
-            <div class="line two"></div>
-            <div class="line three"></div>
-            <div class="line four"></div>
-            <div class="line five"></div>
-            <div class="line six"></div>
-            <div class="line seven"></div>
-          </div>
-        </li>
-        <% }); %>
-      </ul>
-    </div>
-    <br/>
-    <br/>
-    <br/>
-    <div class="cntr">
-      <button id ="btn" name = "btn" ><a href="http://localhost:3000/select_student_course">Change Subject</a></button>
-    </div>
+	<body style="background-color: #76b852;color: white;font-family: cursive;">
+		<p class="h1" style="text-align: center; padding: 30px;">Choose the title</p>
+		<% data.forEach(function(dat) { %>
+		<div class="form-check" style="text-align: center; padding: 10px;font-size: x-large;">
+			<input class="form-check-input" type="radio" name="radio" id = "radio-1" value="<%= dat%>">
+			<label class="form-check-label" for="flexRadioDefault1">
+				<%= dat%>
+			</label>
+		</div>
+		<% }); %>
+		<button style="margin: auto; display: block;margin-top: 10px;background-color: white;" type="button" class="btn btn-success"><a href="http://localhost:3000/select_student_course">Change Subject</a></button>
+	</body>
 </body>
 </html>

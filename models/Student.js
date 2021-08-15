@@ -19,8 +19,6 @@ const studentSchema = new schema({
     password: {
         type: String,
         required: true,
-        maxLength: 10,
-        minLength: 5,
     },
     contact: {
         type: String,

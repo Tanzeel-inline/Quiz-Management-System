@@ -5,11 +5,11 @@ $(document).ready(function(){
         var password = $("#password").val();
         // Checking for blank fields.
         if( email =='' || password ==''){
-            alert("Please fill all fields...!!!!!!");
+            alert("Please fill all fields...!");
         }
         else if ( !isEmail(email) )
         {
-            alert("Invalid email address!!!");
+            alert("Invalid email address!");
         }
         else {
             //Interact with server here
@@ -32,9 +32,6 @@ $(document).ready(function(){
                 }
             });
         }
-    });
-    $('#signup').click(function() {
-        window.location = "http://localhost:3000/teacher_signup";
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

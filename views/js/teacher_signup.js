@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $("#signup").click(function(){
+    $("#signup").click(function(e){
+		e.preventDefault();
         var email = $("#email").val();
         var username = $("#username").val();
         var password = $("#password").val();
@@ -32,11 +33,9 @@ $(document).ready(function(){
                 data: JSON.stringify({email,username,password,contact,address}),
                 success: function(response)
                 {
-                    console.log("Inside the receiving function");
                     console.log(response.success);
                     if ( response.success )
                     {
-                        console.log('Signed up sucessfully');
                         window.location = "http://localhost:3000/teacher";
                     }
                     else
@@ -47,9 +46,6 @@ $(document).ready(function(){
                 }
             });
         }
-    });
-    $('#login').click(function(){
-        window.location = "http://localhost:3000/teacher";
     });
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
