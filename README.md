@@ -5,3 +5,4 @@
 - Worked with middlewares
 - Implemented CSRF Tokens
 - Handled cookies and session for different end users.
+- Used Mongoose Module for database operations.
